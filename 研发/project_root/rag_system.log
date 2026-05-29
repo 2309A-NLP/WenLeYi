@@ -1,0 +1,290 @@
+2026-05-08 15:37:39,920 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-08 15:37:40,481 - last_duan.database - ERROR - MySQL 鉴权失败：请在 .env 中配置 MYSQL_HOST/MYSQL_PORT/MYSQL_USER/MYSQL_PASSWORD/MYSQL_DATABASE。
+2026-05-08 15:41:08,299 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-08 15:41:08,543 - last_duan.database - ERROR - MySQL 鉴权失败：请在 .env 中配置 MYSQL_HOST/MYSQL_PORT/MYSQL_USER/MYSQL_PASSWORD/MYSQL_DATABASE。
+2026-05-08 15:42:46,883 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-08 15:42:47,240 - last_duan.database - INFO - MySQL 数据库初始化完成
+2026-05-08 15:42:48,033 - last_duan.database - INFO - 📋 Milvus 配置信息: host=192.168.18.128, port=19530, ssl=False, timeout=30s
+2026-05-08 15:42:48,033 - last_duan.database - INFO - 🔄 连接 Milvus (第 1/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-08 15:42:48,203 - last_duan.database - INFO - ✅ Milvus 连接成功，版本: 2.6.9
+2026-05-08 15:42:48,227 - last_duan.database - INFO - 📚 初始化 11 个角色知识库集合...
+2026-05-08 15:42:48,581 - last_duan.database - INFO - ✅ 角色知识库集合初始化完成
+2026-05-08 15:42:48,608 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-08 15:42:48,608 - last_duan.database - INFO - ✅ 长期记忆集合初始化完成
+2026-05-08 15:42:48,634 - last_duan.database - INFO - ✅ 股票数据集合初始化完成
+2026-05-08 15:42:48,888 - last_duan.database - INFO - MySQL 数据库初始化完成
+2026-05-08 15:56:09,996 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-08 15:56:10,268 - last_duan.database - INFO - MySQL 数据库初始化完成
+2026-05-08 15:56:21,535 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-08 15:56:21,772 - last_duan.database - INFO - MySQL 数据库初始化完成
+2026-05-08 15:56:22,345 - last_duan.database - INFO - 📋 Milvus 配置信息: host=192.168.18.128, port=19530, ssl=False, timeout=30s
+2026-05-08 15:56:22,346 - last_duan.database - INFO - 🔄 连接 Milvus (第 1/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-08 15:56:22,405 - last_duan.database - INFO - ✅ Milvus 连接成功，版本: 2.6.9
+2026-05-08 15:56:22,410 - last_duan.database - INFO - 📚 初始化 11 个角色知识库集合...
+2026-05-08 15:56:22,608 - last_duan.database - INFO - ✅ 角色知识库集合初始化完成
+2026-05-08 15:56:22,623 - last_duan.database - INFO - ✅ 长期记忆集合初始化完成
+2026-05-08 15:56:22,640 - last_duan.database - INFO - ✅ 股票数据集合初始化完成
+2026-05-08 15:57:08,575 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-08 15:57:08,796 - last_duan.database - INFO - MySQL 数据库初始化完成
+2026-05-08 15:57:09,244 - last_duan.database - INFO - 📋 Milvus 配置信息: host=192.168.18.128, port=19530, ssl=False, timeout=30s
+2026-05-08 15:57:09,245 - last_duan.database - INFO - 🔄 连接 Milvus (第 1/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-08 15:57:09,267 - last_duan.database - INFO - ✅ Milvus 连接成功，版本: 2.6.9
+2026-05-08 15:57:09,287 - last_duan.database - INFO - 📚 初始化 11 个角色知识库集合...
+2026-05-08 15:57:09,463 - last_duan.database - INFO - ✅ 角色知识库集合初始化完成
+2026-05-08 15:57:09,480 - last_duan.database - INFO - ✅ 长期记忆集合初始化完成
+2026-05-08 15:57:09,498 - last_duan.database - INFO - ✅ 股票数据集合初始化完成
+2026-05-08 15:58:22,542 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-08 15:58:22,750 - last_duan.database - INFO - MySQL 数据库初始化完成
+2026-05-08 15:58:23,250 - last_duan.database - INFO - 📋 Milvus 配置信息: host=192.168.18.128, port=19530, ssl=False, timeout=30s
+2026-05-08 15:58:23,250 - last_duan.database - INFO - 🔄 连接 Milvus (第 1/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-08 15:58:23,273 - last_duan.database - INFO - ✅ Milvus 连接成功，版本: 2.6.9
+2026-05-08 15:58:23,277 - last_duan.database - INFO - 📚 初始化 11 个角色知识库集合...
+2026-05-08 15:58:23,465 - last_duan.database - INFO - ✅ 角色知识库集合初始化完成
+2026-05-08 15:58:23,492 - last_duan.database - INFO - ✅ 长期记忆集合初始化完成
+2026-05-08 15:58:23,517 - last_duan.database - INFO - ✅ 股票数据集合初始化完成
+2026-05-08 15:58:23,578 - utils - INFO - 加载 BGE-m3 模型: D:\模型\bge_m3_model
+2026-05-08 15:58:39,449 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-05-08 15:58:39,449 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: D:\模型\bge_m3_model
+2026-05-08 15:58:39,449 - sentence_transformers.SentenceTransformer - WARNING - No sentence-transformers model found with name D:\模型\bge_m3_model. Creating a new one with mean pooling.
+2026-05-08 15:58:40,829 - utils - INFO - ✅ BGE-m3 模型加载成功
+2026-05-08 15:58:47,337 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_2
+2026-05-08 15:58:48,228 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_2，包含 10 条文档
+2026-05-08 15:58:48,228 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=2
+2026-05-08 15:59:56,418 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-08 15:59:56,619 - last_duan.database - INFO - MySQL 数据库初始化完成
+2026-05-08 15:59:57,084 - last_duan.database - INFO - 📋 Milvus 配置信息: host=192.168.18.128, port=19530, ssl=False, timeout=30s
+2026-05-08 15:59:57,084 - last_duan.database - INFO - 🔄 连接 Milvus (第 1/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-08 15:59:57,114 - last_duan.database - INFO - ✅ Milvus 连接成功，版本: 2.6.9
+2026-05-08 15:59:57,117 - last_duan.database - INFO - 📚 初始化 11 个角色知识库集合...
+2026-05-08 15:59:57,315 - last_duan.database - INFO - ✅ 角色知识库集合初始化完成
+2026-05-08 15:59:57,346 - last_duan.database - INFO - ✅ 长期记忆集合初始化完成
+2026-05-08 15:59:57,366 - last_duan.database - INFO - ✅ 股票数据集合初始化完成
+2026-05-08 15:59:57,407 - utils - INFO - 加载 BGE-m3 模型: D:\模型\bge_m3_model
+2026-05-08 16:00:09,445 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-05-08 16:00:09,445 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: D:\模型\bge_m3_model
+2026-05-08 16:00:09,445 - sentence_transformers.SentenceTransformer - WARNING - No sentence-transformers model found with name D:\模型\bge_m3_model. Creating a new one with mean pooling.
+2026-05-08 16:00:10,602 - utils - INFO - ✅ BGE-m3 模型加载成功
+2026-05-08 16:00:13,890 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_1
+2026-05-08 16:00:14,712 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_1，包含 10 条文档
+2026-05-08 16:00:14,712 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=1
+2026-05-08 16:00:18,206 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_2
+2026-05-08 16:00:18,231 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_2，包含 15 条文档
+2026-05-08 16:00:18,231 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=2
+2026-05-08 16:00:21,204 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_3
+2026-05-08 16:00:21,226 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_3，包含 10 条文档
+2026-05-08 16:00:21,227 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=3
+2026-05-08 16:00:24,257 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_4
+2026-05-08 16:00:24,277 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_4，包含 10 条文档
+2026-05-08 16:00:24,277 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=4
+2026-05-08 16:00:27,159 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_5
+2026-05-08 16:00:27,178 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_5，包含 10 条文档
+2026-05-08 16:00:27,178 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=5
+2026-05-08 16:00:30,518 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_6
+2026-05-08 16:00:30,540 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_6，包含 10 条文档
+2026-05-08 16:00:30,540 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=6
+2026-05-08 16:00:33,484 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_7
+2026-05-08 16:00:33,503 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_7，包含 10 条文档
+2026-05-08 16:00:33,503 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=7
+2026-05-08 16:00:36,644 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_8
+2026-05-08 16:00:36,664 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_8，包含 10 条文档
+2026-05-08 16:00:36,665 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=8
+2026-05-08 16:00:39,210 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_9
+2026-05-08 16:00:39,229 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_9，包含 10 条文档
+2026-05-08 16:00:39,230 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=9
+2026-05-08 16:00:42,316 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_10
+2026-05-08 16:00:42,334 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_10，包含 10 条文档
+2026-05-08 16:00:42,334 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=10
+2026-05-08 16:00:46,005 - last_duan.database - INFO - 开始重建 BM25 模型: financial_knowledge_role_11
+2026-05-08 16:00:46,041 - last_duan.database - INFO - BM25 模型重建完成: financial_knowledge_role_11，包含 10 条文档
+2026-05-08 16:00:46,041 - last_duan.database - INFO - 已添加 5 条文档到知识库: role_id=11
+2026-05-09 08:29:34,131 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-09 08:29:34,927 - last_duan.database - INFO - 📋 Milvus 配置信息: host=192.168.18.128, port=19530, ssl=False, timeout=30s
+2026-05-09 08:29:34,927 - last_duan.database - INFO - 🔄 连接 Milvus (第 1/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-09 08:29:34,995 - last_duan.database - INFO - ✅ Milvus 连接成功，版本: 2.6.9
+2026-05-09 08:29:35,303 - last_duan.database - INFO - 📚 初始化 11 个角色知识库集合...
+2026-05-09 08:29:35,560 - last_duan.database - INFO - ✅ 角色知识库集合初始化完成
+2026-05-09 08:29:35,588 - last_duan.database - INFO - ✅ 长期记忆集合初始化完成
+2026-05-09 08:29:35,612 - last_duan.database - INFO - ✅ 股票数据集合初始化完成
+2026-05-13 19:11:16,864 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-13 19:11:46,324 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-13 19:12:43,336 - last_duan.utils - INFO - 📦 last_duan 包加载成功
+2026-05-29 10:21:19,166 - database - INFO - MySQL 数据库初始化完成
+2026-05-29 10:21:19,167 - __main__ - INFO - ✅ MySQL 数据库初始化成功
+2026-05-29 10:21:19,167 - __main__ - INFO - 📚 初始化 Milvus 向量数据库...
+2026-05-29 10:21:20,240 - database - INFO - 📋 Milvus 配置信息: host=192.168.18.128, port=19530, ssl=False, timeout=30s
+2026-05-29 10:21:20,240 - database - INFO - 🔄 连接 Milvus (第 1/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-29 10:21:50,492 - database - INFO - 🔄 连接 Milvus (第 1/3 次尝试, 无别名连接): 192.168.18.128:19530
+2026-05-29 10:22:20,748 - database - WARNING - ❌ Milvus 连接失败 (尝试 1/3)
+2026-05-29 10:22:20,748 - database - ERROR - 🔍 连接被拒绝！请检查：
+2026-05-29 10:22:20,748 - database - ERROR -    1. Milvus 服务是否正在运行
+2026-05-29 10:22:20,748 - database - ERROR -    2. Milvus 主机地址是否正确
+2026-05-29 10:22:20,748 - database - ERROR -    3. Milvus 端口是否正确 (默认19530)
+2026-05-29 10:22:20,748 - database - ERROR -    4. 防火墙是否允许访问
+2026-05-29 10:22:20,748 - database - INFO - ⏳ 等待 2 秒后重试...
+2026-05-29 10:22:22,749 - database - INFO - 🔄 连接 Milvus (第 2/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-29 10:22:26,235 - database - INFO - MySQL 数据库初始化完成
+2026-05-29 10:22:26,236 - __main__ - INFO - ✅ MySQL 数据库初始化成功
+2026-05-29 10:22:26,236 - __main__ - INFO - 📚 初始化 Milvus 向量数据库...
+2026-05-29 10:22:26,680 - database - INFO - 📋 Milvus 配置信息: host=192.168.18.128, port=19530, ssl=False, timeout=30s
+2026-05-29 10:22:26,682 - database - INFO - 🔄 连接 Milvus (第 1/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-29 10:22:52,796 - database - INFO - 🔄 连接 Milvus (第 2/3 次尝试, 无别名连接): 192.168.18.128:19530
+2026-05-29 10:22:56,747 - database - INFO - 🔄 连接 Milvus (第 1/3 次尝试, 无别名连接): 192.168.18.128:19530
+2026-05-29 10:23:22,822 - database - WARNING - ❌ Milvus 连接失败 (尝试 2/3)
+2026-05-29 10:23:22,822 - database - ERROR - 🔍 连接被拒绝！请检查：
+2026-05-29 10:23:22,822 - database - ERROR -    1. Milvus 服务是否正在运行
+2026-05-29 10:23:22,823 - database - ERROR -    2. Milvus 主机地址是否正确
+2026-05-29 10:23:22,823 - database - ERROR -    3. Milvus 端口是否正确 (默认19530)
+2026-05-29 10:23:22,823 - database - ERROR -    4. 防火墙是否允许访问
+2026-05-29 10:23:22,823 - database - INFO - ⏳ 等待 2 秒后重试...
+2026-05-29 10:23:24,828 - database - INFO - 🔄 连接 Milvus (第 3/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-29 10:23:26,814 - database - WARNING - ❌ Milvus 连接失败 (尝试 1/3)
+2026-05-29 10:23:26,814 - database - ERROR - 🔍 连接被拒绝！请检查：
+2026-05-29 10:23:26,814 - database - ERROR -    1. Milvus 服务是否正在运行
+2026-05-29 10:23:26,814 - database - ERROR -    2. Milvus 主机地址是否正确
+2026-05-29 10:23:26,814 - database - ERROR -    3. Milvus 端口是否正确 (默认19530)
+2026-05-29 10:23:26,814 - database - ERROR -    4. 防火墙是否允许访问
+2026-05-29 10:23:26,814 - database - INFO - ⏳ 等待 2 秒后重试...
+2026-05-29 10:23:28,825 - database - INFO - 🔄 连接 Milvus (第 2/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-29 10:23:54,868 - database - INFO - 🔄 连接 Milvus (第 3/3 次尝试, 无别名连接): 192.168.18.128:19530
+2026-05-29 10:23:59,041 - database - INFO - 🔄 连接 Milvus (第 2/3 次尝试, 无别名连接): 192.168.18.128:19530
+2026-05-29 10:24:25,005 - database - WARNING - ❌ Milvus 连接失败 (尝试 3/3)
+2026-05-29 10:24:25,005 - database - ERROR - 🔍 连接被拒绝！请检查：
+2026-05-29 10:24:25,005 - database - ERROR -    1. Milvus 服务是否正在运行
+2026-05-29 10:24:25,005 - database - ERROR -    2. Milvus 主机地址是否正确
+2026-05-29 10:24:25,005 - database - ERROR -    3. Milvus 端口是否正确 (默认19530)
+2026-05-29 10:24:25,005 - database - ERROR -    4. 防火墙是否允许访问
+2026-05-29 10:24:25,005 - database - ERROR - ❌ Milvus 连接完全失败，错误: <MilvusException: (code=2, message=Fail connecting to server on 192.168.18.128:19530, illegal connection params or server unavailable)>
+2026-05-29 10:24:25,005 - __main__ - WARNING - ⚠️ Milvus 向量数据库初始化失败（将使用本地缓存模式）: <MilvusException: (code=2, message=Fail connecting to server on 192.168.18.128:19530, illegal connection params or server unavailable)>
+2026-05-29 10:24:25,005 - __main__ - INFO - 🔍 诊断 Milvus 连接问题...
+2026-05-29 10:24:25,005 - database - INFO - 🔍 开始诊断 Milvus 连接...
+2026-05-29 10:24:29,265 - database - WARNING - ❌ Milvus 连接失败 (尝试 2/3)
+2026-05-29 10:24:29,265 - database - ERROR - 🔍 连接被拒绝！请检查：
+2026-05-29 10:24:29,265 - database - ERROR -    1. Milvus 服务是否正在运行
+2026-05-29 10:24:29,265 - database - ERROR -    2. Milvus 主机地址是否正确
+2026-05-29 10:24:29,265 - database - ERROR -    3. Milvus 端口是否正确 (默认19530)
+2026-05-29 10:24:29,265 - database - ERROR -    4. 防火墙是否允许访问
+2026-05-29 10:24:29,265 - database - INFO - ⏳ 等待 2 秒后重试...
+2026-05-29 10:24:31,267 - database - INFO - 🔄 连接 Milvus (第 3/3 次尝试, 标准连接): 192.168.18.128:19530
+2026-05-29 10:24:57,163 - __main__ - INFO -    ❌ 网络连接失败: 端口 19530 无法访问
+2026-05-29 10:24:57,163 - __main__ - INFO -    ❌ Milvus 连接失败: <MilvusException: (code=2, message=Fail connecting to server on 192.168.18.128:19530, illegal connection params or server unavailable)>
+2026-05-29 10:24:57,163 - __main__ - INFO -    💡 请检查 Milvus 服务是否正在运行
+2026-05-29 10:24:57,163 - __main__ - INFO -    💡 请检查防火墙设置，确保端口 19530 已开放
+2026-05-29 10:24:57,163 - __main__ - INFO -    💡 错误详情: <MilvusException: (code=2, message=Fail connecting to server on 192.168.18.128:19530, illegal connection params or server unavailable)>
+2026-05-29 10:24:57,164 - __main__ - INFO - 🧠 加载向量化模型...
+2026-05-29 10:24:57,164 - utils - INFO - 加载 BGE-m3 模型: D:\模型\bge_m3_model
+2026-05-29 10:25:01,286 - database - INFO - 🔄 连接 Milvus (第 3/3 次尝试, 无别名连接): 192.168.18.128:19530
+2026-05-29 10:25:31,498 - database - WARNING - ❌ Milvus 连接失败 (尝试 3/3)
+2026-05-29 10:25:31,498 - database - ERROR - 🔍 连接被拒绝！请检查：
+2026-05-29 10:25:31,498 - database - ERROR -    1. Milvus 服务是否正在运行
+2026-05-29 10:25:31,498 - database - ERROR -    2. Milvus 主机地址是否正确
+2026-05-29 10:25:31,498 - database - ERROR -    3. Milvus 端口是否正确 (默认19530)
+2026-05-29 10:25:31,498 - database - ERROR -    4. 防火墙是否允许访问
+2026-05-29 10:25:31,498 - database - ERROR - ❌ Milvus 连接完全失败，错误: <MilvusException: (code=2, message=Fail connecting to server on 192.168.18.128:19530, illegal connection params or server unavailable)>
+2026-05-29 10:25:31,499 - __main__ - WARNING - ⚠️ Milvus 向量数据库初始化失败（将使用本地缓存模式）: <MilvusException: (code=2, message=Fail connecting to server on 192.168.18.128:19530, illegal connection params or server unavailable)>
+2026-05-29 10:25:31,499 - __main__ - INFO - 🔍 诊断 Milvus 连接问题...
+2026-05-29 10:25:31,499 - database - INFO - 🔍 开始诊断 Milvus 连接...
+2026-05-29 10:25:36,749 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-05-29 10:25:36,749 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: D:\模型\bge_m3_model
+2026-05-29 10:25:36,749 - utils - ERROR - ❌ BGE-m3 模型加载失败: Path D:\模型\bge_m3_model not found
+2026-05-29 10:25:36,749 - __main__ - ERROR - ❌ 向量化模型加载失败: Path D:\模型\bge_m3_model not found
+2026-05-29 10:25:36,749 - utils - INFO - 加载 BGE-reranker 模型: D:\模型\bge-reranker-base
+2026-05-29 10:25:36,918 - utils - INFO - 使用设备: cpu
+2026-05-29 10:25:36,920 - utils - WARNING - ⚠️ BGE-reranker 模型加载失败: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'D:\模型\bge-reranker-base'.
+2026-05-29 10:25:37,309 - __main__ - INFO - ✅ BGE-reranker 重排序模型加载成功
+2026-05-29 10:25:37,309 - __main__ - INFO - 🔌 加载 Redis 客户端...
+2026-05-29 10:25:37,309 - utils - INFO - 连接 Redis: localhost:6379
+2026-05-29 10:25:39,522 - utils - INFO - ✅ Redis 连接成功
+2026-05-29 10:25:39,522 - __main__ - INFO - ✅ Redis 客户端加载成功
+2026-05-29 10:25:39,522 - __main__ - INFO - 🎉 服务初始化完成
+2026-05-29 10:25:39,522 - __main__ - INFO - 🏗️ 创建 FastAPI 应用...
+2026-05-29 10:25:39,522 - __main__ - INFO - 📡 注册 API 路由...
+2026-05-29 10:25:39,560 - __main__ - INFO - ✅ FastAPI 应用创建完成
+2026-05-29 10:25:39,560 - __main__ - INFO - 🚀 服务启动准备完成，端口: 8001
+2026-05-29 10:26:03,681 - __main__ - INFO -    ❌ 网络连接失败: 端口 19530 无法访问
+2026-05-29 10:26:03,681 - __main__ - INFO -    ❌ Milvus 连接失败: <MilvusException: (code=2, message=Fail connecting to server on 192.168.18.128:19530, illegal connection params or server unavailable)>
+2026-05-29 10:26:03,681 - __main__ - INFO -    💡 请检查 Milvus 服务是否正在运行
+2026-05-29 10:26:03,681 - __main__ - INFO -    💡 请检查防火墙设置，确保端口 19530 已开放
+2026-05-29 10:26:03,681 - __main__ - INFO -    💡 错误详情: <MilvusException: (code=2, message=Fail connecting to server on 192.168.18.128:19530, illegal connection params or server unavailable)>
+2026-05-29 10:26:03,682 - __main__ - INFO - 🧠 加载向量化模型...
+2026-05-29 10:26:03,682 - utils - INFO - 加载 BGE-m3 模型: D:\模型\bge_m3_model
+2026-05-29 10:26:20,473 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-05-29 10:26:20,473 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: D:\模型\bge_m3_model
+2026-05-29 10:26:20,474 - utils - ERROR - ❌ BGE-m3 模型加载失败: Path D:\模型\bge_m3_model not found
+2026-05-29 10:26:20,474 - __main__ - ERROR - ❌ 向量化模型加载失败: Path D:\模型\bge_m3_model not found
+2026-05-29 10:26:20,474 - utils - INFO - 加载 BGE-reranker 模型: D:\模型\bge-reranker-base
+2026-05-29 10:26:20,898 - utils - INFO - 使用设备: cpu
+2026-05-29 10:26:20,900 - utils - WARNING - ⚠️ BGE-reranker 模型加载失败: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'D:\模型\bge-reranker-base'.
+2026-05-29 10:26:21,605 - __main__ - INFO - ✅ BGE-reranker 重排序模型加载成功
+2026-05-29 10:26:21,605 - __main__ - INFO - 🔌 加载 Redis 客户端...
+2026-05-29 10:26:21,605 - utils - INFO - 连接 Redis: localhost:6379
+2026-05-29 10:26:23,759 - utils - INFO - ✅ Redis 连接成功
+2026-05-29 10:26:23,759 - __main__ - INFO - ✅ Redis 客户端加载成功
+2026-05-29 10:26:23,759 - __main__ - INFO - 🎉 服务初始化完成
+2026-05-29 10:26:23,759 - __main__ - INFO - 🏗️ 创建 FastAPI 应用...
+2026-05-29 10:26:23,760 - __main__ - INFO - 📡 注册 API 路由...
+2026-05-29 10:26:23,784 - __main__ - INFO - ✅ FastAPI 应用创建完成
+2026-05-29 10:26:23,784 - __main__ - INFO - 🚀 服务启动准备完成，端口: 8001
+2026-05-29 10:30:48,406 - database - INFO - 用户登录成功: 13, 用户ID: 5
+2026-05-29 10:32:34,903 - api - INFO - 收到流式聊天请求: user_id=5, role_id=3, has_file=False
+2026-05-29 10:32:38,270 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:32:38,948 - utils - INFO - Query改写: 原问题='你好啊...' -> 改写后='你好啊...'
+2026-05-29 10:32:38,948 - api - INFO - 原问题: 你好啊... -> 改写后: 你好啊...
+2026-05-29 10:32:39,103 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:32:39,110 - api - INFO - 开始流式输出...
+2026-05-29 10:32:40,550 - api - INFO - 流式输出完成，总长度: 118
+2026-05-29 10:33:39,463 - api - INFO - 收到流式聊天请求: user_id=5, role_id=3, has_file=False
+2026-05-29 10:33:39,659 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:33:40,830 - utils - INFO - Query改写: 原问题='月入两万我可以怎么进行理财...' -> 改写后='月入两万的情况下，我可以怎么进行理财规划？...'
+2026-05-29 10:33:40,830 - api - INFO - 原问题: 月入两万我可以怎么进行理财... -> 改写后: 月入两万的情况下，我可以怎么进行理财规划？...
+2026-05-29 10:33:40,962 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:33:40,962 - api - INFO - 开始流式输出...
+2026-05-29 10:33:46,800 - api - INFO - 流式输出完成，总长度: 976
+2026-05-29 10:52:54,889 - api - INFO - 收到流式聊天请求: user_id=5, role_id=4, has_file=False
+2026-05-29 10:52:55,260 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:52:56,780 - utils - INFO - Query改写: 原问题='吹空调吹的流鼻涕了...' -> 改写后='吹空调着凉引起的流鼻涕，和之前提到的感冒发烧一样，属于病毒感...'
+2026-05-29 10:52:56,781 - api - INFO - 原问题: 吹空调吹的流鼻涕了... -> 改写后: 吹空调着凉引起的流鼻涕，和之前提到的感冒发烧一样，属于病毒感染导致的普通感冒症状吗？居家处理时应该注...
+2026-05-29 10:52:57,100 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:52:57,101 - api - INFO - 开始流式输出...
+2026-05-29 10:53:02,855 - api - INFO - 流式输出完成，总长度: 749
+2026-05-29 10:54:10,478 - api - INFO - 收到流式聊天请求: user_id=5, role_id=6, has_file=False
+2026-05-29 10:54:10,681 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:54:12,116 - utils - INFO - Query改写: 原问题='最近天气热太困熬了...' -> 改写后='最近天气热太困，我熬夜了，想问一下有没有什么办法能缓解这种状...'
+2026-05-29 10:54:12,116 - api - INFO - 原问题: 最近天气热太困熬了... -> 改写后: 最近天气热太困，我熬夜了，想问一下有没有什么办法能缓解这种状态？...
+2026-05-29 10:54:12,260 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:54:12,261 - api - INFO - 开始流式输出...
+2026-05-29 10:54:14,012 - api - INFO - 流式输出完成，总长度: 96
+2026-05-29 10:54:39,353 - api - INFO - 收到流式聊天请求: user_id=5, role_id=6, has_file=False
+2026-05-29 10:54:39,485 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:54:40,690 - utils - INFO - Query改写: 原问题='周六想出去玩但是好像有40度...' -> 改写后='周六想出去玩，但天气预报显示好像有40度高温，我该怎么安排活...'
+2026-05-29 10:54:40,690 - api - INFO - 原问题: 周六想出去玩但是好像有40度... -> 改写后: 周六想出去玩，但天气预报显示好像有40度高温，我该怎么安排活动？...
+2026-05-29 10:54:40,807 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:54:40,808 - api - INFO - 开始流式输出...
+2026-05-29 10:54:43,173 - api - INFO - 流式输出完成，总长度: 128
+2026-05-29 10:54:58,986 - api - INFO - 收到流式聊天请求: user_id=5, role_id=6, has_file=False
+2026-05-29 10:54:59,168 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:55:00,449 - utils - INFO - Query改写: 原问题='想去吃烤鱼...' -> 改写后='在周六40度高温的天气下，我想出去玩，但觉得太热，所以想去吃...'
+2026-05-29 10:55:00,450 - api - INFO - 原问题: 想去吃烤鱼... -> 改写后: 在周六40度高温的天气下，我想出去玩，但觉得太热，所以想去吃烤鱼，请问有什么适合的推荐或建议吗？...
+2026-05-29 10:55:00,570 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:55:00,571 - api - INFO - 开始流式输出...
+2026-05-29 10:55:03,153 - api - INFO - 流式输出完成，总长度: 118
+2026-05-29 10:55:11,033 - api - INFO - 收到流式聊天请求: user_id=5, role_id=6, has_file=False
+2026-05-29 10:55:11,193 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:55:12,248 - utils - INFO - Query改写: 原问题='麻辣的...' -> 改写后='在40度高温的天气下，你想去吃烤鱼，请问你平时喜欢吃什么口味...'
+2026-05-29 10:55:12,248 - api - INFO - 原问题: 麻辣的... -> 改写后: 在40度高温的天气下，你想去吃烤鱼，请问你平时喜欢吃什么口味的烤鱼？是麻辣的还是蒜香的？...
+2026-05-29 10:55:12,368 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:55:12,368 - api - INFO - 开始流式输出...
+2026-05-29 10:55:14,614 - api - INFO - 流式输出完成，总长度: 134
+2026-05-29 10:55:31,613 - api - INFO - 收到流式聊天请求: user_id=5, role_id=6, has_file=False
+2026-05-29 10:55:32,347 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:55:33,527 - utils - INFO - Query改写: 原问题='你有什么推荐吗...' -> 改写后='在40度高温天气下，你想去吃麻辣烤鱼，有什么具体的店铺或口味...'
+2026-05-29 10:55:33,527 - api - INFO - 原问题: 你有什么推荐吗... -> 改写后: 在40度高温天气下，你想去吃麻辣烤鱼，有什么具体的店铺或口味推荐吗？...
+2026-05-29 10:55:33,869 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:55:33,869 - api - INFO - 开始流式输出...
+2026-05-29 10:55:36,024 - api - INFO - 流式输出完成，总长度: 173
+2026-05-29 10:56:15,993 - api - INFO - 收到流式聊天请求: user_id=5, role_id=8, has_file=False
+2026-05-29 10:56:16,440 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:56:17,908 - utils - INFO - Query改写: 原问题='未成年保护法...' -> 改写后='根据之前讨论的校园欺凌和学校免责承诺书的内容，请问《未成年人...'
+2026-05-29 10:56:17,909 - api - INFO - 原问题: 未成年保护法... -> 改写后: 根据之前讨论的校园欺凌和学校免责承诺书的内容，请问《未成年人保护法》中关于学校对在校学生的教育、管理...
+2026-05-29 10:56:18,059 - httpx - INFO - HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-05-29 10:56:18,060 - api - INFO - 开始流式输出...
+2026-05-29 10:56:25,560 - api - INFO - 流式输出完成，总长度: 1121
