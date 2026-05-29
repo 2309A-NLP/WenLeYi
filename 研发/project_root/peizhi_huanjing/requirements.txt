@@ -1,0 +1,14 @@
+﻿fastapi>=0.104.1
+uvicorn>=0.24.0
+pydantic>=2.5.0
+python-dotenv>=1.0.0
+pymysql>=1.1.0
+redis>=5.0.1
+pymilvus>=2.4.3
+sentence-transformers>=2.2.2
+FlagEmbedding>=1.2.13
+scipy>=1.11.4
+openai>=1.13.3
+PyMuPDF>=1.23.22
+akshare>=1.11.0
+requests>=2.31.0

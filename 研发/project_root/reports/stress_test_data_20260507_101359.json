@@ -1,0 +1,64 @@
+[
+  {
+    "concurrent": 1,
+    "total_requests": 10,
+    "successes": 0,
+    "errors": 0,
+    "success_rate": 0,
+    "total_time_ms": 96893.4154510498,
+    "qps": 0.0,
+    "avg_latency_ms": 0,
+    "p90_latency_ms": 0,
+    "p95_latency_ms": 0,
+    "max_latency_ms": 0
+  },
+  {
+    "concurrent": 5,
+    "total_requests": 10,
+    "successes": 0,
+    "errors": 0,
+    "success_rate": 0,
+    "total_time_ms": 62.372684478759766,
+    "qps": 0.0,
+    "avg_latency_ms": 0,
+    "p90_latency_ms": 0,
+    "p95_latency_ms": 0,
+    "max_latency_ms": 0
+  },
+  {
+    "concurrent": 10,
+    "total_requests": 10,
+    "successes": 0,
+    "errors": 0,
+    "success_rate": 0,
+    "total_time_ms": 60.44793128967285,
+    "qps": 0.0,
+    "avg_latency_ms": 0,
+    "p90_latency_ms": 0,
+    "p95_latency_ms": 0,
+    "max_latency_ms": 0
+  },
+  {
+    "concurrent": 20,
+    "total_requests": 10,
+    "successes": 0,
+    "errors": 0,
+    "success_rate": 0,
+    "total_time_ms": 62.09087371826172,
+    "qps": 0.0,
+    "avg_latency_ms": 0,
+    "p90_latency_ms": 0,
+    "p95_latency_ms": 0,
+    "max_latency_ms": 0
+  },
+  {
+    "duration": 60,
+    "concurrent": 5,
+    "total_requests": 0,
+    "successes": 0,
+    "success_rate": 0,
+    "qps": 0.0,
+    "avg_latency_ms": 0,
+    "max_latency_ms": 0
+  }
+]

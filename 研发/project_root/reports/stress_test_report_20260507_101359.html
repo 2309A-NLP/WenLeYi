@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>RAG系统压力测试报告</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .summary { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .metric { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; }
+        .metric .value { font-size: 28px; font-weight: bold; }
+        .metric .label { font-size: 14px; opacity: 0.9; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #007bff; color: white; }
+        tr:hover { background: #f8f9fa; }
+        .optimization { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin-top: 20px; border-radius: 0 8px 8px 0; }
+        .optimization h3 { margin: 0 0 10px 0; color: #856404; }
+        .optimization ul { margin: 0; padding-left: 20px; }
+        .optimization li { margin-bottom: 5px; }
+        .timestamp { color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 RAG系统压力测试报告</h1>
+        <p class="timestamp">测试时间: 2026-05-07 10:13:59</p>
+        
+        <div class="summary">
+            <h2>📈 性能概览</h2>
+            <div class="metrics">
+                <div class="metric"><div class="value">0.00</div><div class="label">平均QPS</div></div>
+                <div class="metric"><div class="value">0ms</div><div class="label">平均延迟</div></div>
+                <div class="metric"><div class="value">0.0%</div><div class="label">平均成功率</div></div>
+                <div class="metric"><div class="value">40</div><div class="label">总请求数</div></div>
+            </div>
+        </div>
+        
+        <h2>📋 详细测试结果</h2>
+        <table>
+            <tr><th>并发数</th><th>总请求</th><th>成功</th><th>成功率</th><th>QPS</th><th>平均延迟</th><th>P90延迟</th><th>P95延迟</th></tr>
+            <tr>
+                <td>1</td>
+                <td>10</td>
+                <td>0</td>
+                <td>0.0%</td>
+                <td>0.00</td>
+                <td>0ms</td>
+                <td>0ms</td>
+                <td>0ms</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>10</td>
+                <td>0</td>
+                <td>0.0%</td>
+                <td>0.00</td>
+                <td>0ms</td>
+                <td>0ms</td>
+                <td>0ms</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>10</td>
+                <td>0</td>
+                <td>0.0%</td>
+                <td>0.00</td>
+                <td>0ms</td>
+                <td>0ms</td>
+                <td>0ms</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td>10</td>
+                <td>0</td>
+                <td>0.0%</td>
+                <td>0.00</td>
+                <td>0ms</td>
+                <td>0ms</td>
+                <td>0ms</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0.0%</td>
+                <td>0.00</td>
+                <td>0ms</td>
+                <td>0ms</td>
+                <td>0ms</td>
+            </tr>
+        </table>
+        
+        <div class="optimization">
+            <h3>💡 性能优化建议</h3>
+            <ul>
+                <li>🟢 延迟正常 (<3秒)</li>
+                <li>当前配置良好，可考虑进一步优化</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
