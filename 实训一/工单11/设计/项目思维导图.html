@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG问答系统 - 思维导图</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6fa}
+.bar{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px 24px;position:sticky;top:0;z-index:100}
+.bar h1{font-size:17px;font-weight:700}
+svg{position:absolute;top:0;left:0;pointer-events:none;z-index:1}
+.mm{position:relative;overflow:auto}
+.cc{position:absolute;z-index:10;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:18px;font-weight:700;padding:20px 36px;border-radius:50px;box-shadow:0 6px 24px rgba(102,126,234,.45);white-space:nowrap;text-align:center}
+.card{position:absolute;z-index:5;background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.06);overflow:hidden;border-top:4px solid var(--c)}
+.card .hd{padding:8px 14px;color:#fff;font-size:13px;font-weight:700;background:var(--c);display:flex;align-items:center;gap:5px}
+.card .bd{padding:8px 12px}
+.su{padding:3px 0;font-size:11px;color:#444;line-height:1.5;border-bottom:1px dashed #f0f0f0}
+.su:last-child{border-bottom:none}
+.lf{font-size:10px;color:#999;padding-left:12px;line-height:1.45}
+.c0{--c:#E74C3C}.c1{--c:#E67E22}.c2{--c:#F39C12}.c3{--c:#2ECC71}.c4{--c:#1ABC9C}.c5{--c:#3498DB}
+</style>
+</head>
+<body>
+<div class="bar"><h1>🧠 RAG问答系统 · 全景思维导图</h1></div>
+<div class="mm" id="mm"><svg id="svg"></svg><div class="cc" id="cc">RAG问答系统</div></div>
+<script>
+const LD=[
+  {i:"📦",t:"数据层",n:[
+    {x:"文档处理",f:["PDF解析（PyMuPDF）","图像OCR（PaddleOCR）","表格提取（pdfplumber）"]},
+    {x:"分块策略",f:["固定大小分块（300字符）","重叠分块（100字符重叠）","语义分块（可选）"]},
+    {x:"向量化",f:["Embedding模型（m3e-base）","微调后模型（m3e-finetuned）","768维向量表示"]}]},
+  {i:"💾",t:"存储层",n:[
+    {x:"向量数据库",f:["FAISS（本地快速检索）","Milvus（云端高性能）"]},
+    {x:"关系数据库",f:["MySQL（用户、文档元数据）","Redis（QA缓存、会话状态）"]},
+    {x:"图数据库",f:["Neo4j（实体关系、知识图谱）"]}]},
+  {i:"🔍",t:"检索层",n:[
+    {x:"BM25检索",f:["jieba分词","TF-IDF计算","关键词匹配"]},
+    {x:"向量检索",f:["余弦相似度","Top-K召回"]},
+    {x:"混合检索",f:["RRF融合算法","分数归一化","加权排序"]},
+    {x:"Reranker重排序",f:["bge-reranker-base","交叉编码器","精排Top-3"]}]},
+];
+const RD=[
+  {i:"🤖",t:"生成层",n:[
+    {x:"LLM调用",f:["小米mimo-v2.5","上下文注入","流式输出"]},
+    {x:"Prompt工程",f:["检索结果整合","指令遵循","纯文本输出"]},
+    {x:"后处理",f:["答案验证","来源追溯","格式优化"]}]},
+  {i:"🌐",t:"应用层",n:[
+    {x:"Web界面",f:["Flask框架","响应式设计","对话历史"]},
+    {x:"API接口",f:["RESTful API","WebSocket实时通信","文档上传接口"]},
+    {x:"安全认证",f:["JWT令牌","用户权限管理","内容安全过滤"]}]},
+  {i:"⚙️",t:"优化层",n:[
+    {x:"Embedding微调",f:["数据生成（LLM）","对比学习训练","效果评估对比"]},
+    {x:"检索优化",f:["参数调优","索引优化","缓存策略"]},
+    {x:"性能监控",f:["响应时间统计","检索质量评估","用户反馈收集"]}]},
+];
+const CLR=["#E74C3C","#E67E22","#F39C12","#2ECC71","#1ABC9C","#3498DB"];
+const mm=document.getElementById('mm'),svgEl=document.getElementById('svg'),cc=document.getElementById('cc');
+
+function makeCard(b,ci){
+  const card=document.createElement('div');
+  card.className=`card c${ci}`;
+  card.innerHTML=`<div class="hd"><span>${b.i} ${b.t}</span></div><div class="bd">${
+    b.n.map(n=>`<div class="su">▸ ${n.x}${(n.f||[]).map(f=>`<div class="lf">• ${f}</div>`).join('')}</div>`).join('')
+  }</div>`;
+  return card;
+}
+
+// 精确计算每个卡片的高度
+function cardHeight(b){
+  const hdH=35; // header高度
+  const bdPad=16; // bd上下padding
+  const itemH=22; // 每个su高度
+  const lfH=16; // 每个lf高度
+  const bdBdr=8; // bd底部padding
+  let items=b.n.length;
+  let lfs=b.n.reduce((s,n)=>s+(n.f||[]).length,0);
+  return hdH+bdPad+items*itemH+lfs*lfH+bdBdr;
+}
+
+const W=Math.max(1800,window.innerWidth);
+mm.style.width=W+'px';
+const cx=W/2;
+const gap=50;
+
+// 创建卡片
+const allCards=[];
+LD.forEach((b,i)=>{
+  const c=makeCard(b,i);
+  mm.appendChild(c);
+  allCards.push({c,side:'L',h:cardHeight(b)});
+});
+RD.forEach((b,i)=>{
+  const c=makeCard(b,i+LD.length);
+  mm.appendChild(c);
+  allCards.push({c,side:'R',h:cardHeight(b)});
+});
+
+// 精确排列
+const leftCards=allCards.filter(x=>x.side==='L');
+const rightCards=allCards.filter(x=>x.side==='R');
+
+let ly=80;
+leftCards.forEach(({c,h})=>{
+  c.style.left=(cx-100)+'px';
+  c.style.top=ly+'px';
+  c.style.transform='translateX(-100%)';
+  ly+=h+gap;
+});
+
+let ry=80;
+rightCards.forEach(({c,h})=>{
+  c.style.left=(cx+100)+'px';
+  c.style.top=ry+'px';
+  ry+=h+gap;
+});
+
+const H=Math.max(ly,ry)+80;
+mm.style.height=H+'px';
+svgEl.setAttribute('width',W);svgEl.setAttribute('height',H);
+cc.style.left=cx+'px';cc.style.top=(H/2)+'px';cc.style.transform='translate(-50%,-50%)';
+
+// 画连线
+const mmR=mm.getBoundingClientRect();
+const ccR=cc.getBoundingClientRect();
+const ccx=ccR.left+ccR.width/2-mmR.left;
+const ccy=ccR.top+ccR.height/2-mmR.top;
+
+allCards.forEach(({c,side})=>{
+  const isL=side==='L';
+  const cR=c.getBoundingClientRect();
+  const midY=cR.top+cR.height/2-mmR.top;
+  const edgeX=isL?cR.right-mmR.left:cR.left-mmR.left;
+  const stroke=getComputedStyle(c).getPropertyValue('border-top-color');
+  const x1=isL?ccx+18:ccx-18;
+  const mx=(x1+edgeX)/2;
+  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d',`M${x1},${ccy} C${mx},${ccy} ${mx},${midY} ${edgeX},${midY}`);
+  p.setAttribute('stroke',stroke);p.setAttribute('stroke-width','2.5');
+  p.setAttribute('fill','none');p.setAttribute('opacity','.4');
+  p.setAttribute('stroke-linecap','round');
+  svgEl.appendChild(p);
+});
+</script>
+</body>
+</html>

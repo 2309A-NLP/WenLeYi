@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>项目思维导图 - Graph RAG 金融问答系统</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Microsoft YaHei',Arial,sans-serif;background:#0f0f23;color:#eee;overflow:hidden;}
+#header{background:linear-gradient(135deg,#16213e,#0f3460);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #e94560;}
+#header h1{font-size:18px;}
+#header .info{font-size:12px;color:#888;}
+#canvas{width:100%;height:calc(100vh - 56px);overflow:auto;position:relative;}
+svg{position:absolute;top:0;left:0;pointer-events:none;}
+.node{position:absolute;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;transition:all .2s;white-space:nowrap;z-index:2;}
+.node:hover{transform:scale(1.08);z-index:10;box-shadow:0 0 20px rgba(233,69,96,.4);}
+.node.root{background:linear-gradient(135deg,#e94560,#c0392b);font-size:16px;font-weight:bold;padding:12px 20px;border-radius:12px;}
+.node.l1{font-size:14px;font-weight:bold;padding:10px 16px;}
+.node.l2{font-size:12px;padding:6px 12px;}
+.node.l3{font-size:11px;padding:5px 10px;border-radius:6px;}
+.cat-core{background:#1a3a5c;border:2px solid #3498db;color:#87ceeb;}
+.cat-infra{background:#3a3a1c;border:2px solid #f39c12;color:#f5d76e;}
+.cat-feature{background:#1a3a2c;border:2px solid #2ecc71;color:#a8e6cf;}
+.cat-script{background:#2a1a3c;border:2px solid #9b59b6;color:#d2b4de;}
+.cat-doc{background:#3a2a1c;border:2px solid #e67e22;color:#f0c27f;}
+.cat-pipeline{background:#1a2a3c;border:2px solid #00bcd4;color:#80deea;}
+#tooltip{position:fixed;background:#16213e;border:1px solid #e94560;border-radius:8px;padding:12px 16px;font-size:12px;color:#eee;max-width:350px;pointer-events:none;z-index:100;display:none;line-height:1.6;white-space:normal;}
+#tooltip .tt-title{color:#e94560;font-weight:bold;margin-bottom:4px;}
+#tooltip .tt-desc{color:#aaa;}
+</style>
+</head>
+<body>
+<div id="header">
+  <h1>📊 项目思维导图 — Graph RAG 金融问答系统</h1>
+  <div class="info">gongdan9 | 双击节点展开/折叠 | 鼠标悬停查看详情</div>
+</div>
+<div id="canvas">
+  <svg id="lines"></svg>
+</div>
+<div id="tooltip"><div class="tt-title"></div><div class="tt-desc"></div></div>
+
+<script>
+// ============ 数据定义 ============
+var tree = {
+  id:"root", label:"Graph RAG\n金融问答系统", cat:"root", x:900, y:340,
+  desc:"基于知识图谱的金融文档问答系统，支持混合检索、多轮对话、图谱增强生成",
+  children:[
+    {id:"core", label:"🔧 核心模块 (core/)", cat:"l1 cat-core", x:350, y:120,
+     desc:"RAG系统核心代码，包含检索、存储、生成、图谱等全部逻辑",
+     children:[
+      {id:"rag", label:"rag.py\nRAG Pipeline", cat:"l2 cat-core", x:80, y:30,
+       desc:"核心管线：检索→精排→Prompt构建→LLM生成→缓存，支持流式/非流式"},
+      {id:"retriever", label:"retriever.py\n混合检索器", cat:"l2 cat-core", x:80, y:100,
+       desc:"HybridRetriever：BM25+向量+图谱三路并行检索，加权融合(RRF)，多跳图遍历"},
+      {id:"vstore", label:"vector_store.py\n向量存储", cat:"l2 cat-core", x:80, y:170,
+       desc:"Milvus向量存储 + QuestionStore QA缓存，支持增量更新"},
+      {id:"graphs", label:"graph_store.py\n图谱存储", cat:"l2 cat-core", x:80, y:240,
+       desc:"Neo4j图谱存储，单跳/多跳检索，三元组CRUD"},
+      {id:"graphb", label:"graph_builder.py\n图谱构建", cat:"l2 cat-core", x:80, y:310,
+       desc:"从文档chunks提取实体关系三元组，正则匹配+冒号模式"},
+      {id:"llm", label:"llm.py\nLLM客户端", cat:"l2 cat-core", x:80, y:380,
+       desc:"OpenAI兼容接口，支持chat/stream/图片输入"},
+      {id:"reranker", label:"reranker.py\n重排序器", cat:"l2 cat-core", x:80, y:450,
+       desc:"CrossEncoder精排，bge-reranker-base本地模型"},
+      {id:"config", label:"config.py\n配置中心", cat:"l2 cat-core", x:80, y:520,
+       desc:"统一配置管理，.env驱动，启动时打印全部参数"},
+      {id:"docproc", label:"document_processor.py\n文档处理", cat:"l2 cat-core", x:580, y:30,
+       desc:"PDF/DOCX解析，分块(chunk_size=300, overlap=100)"},
+      {id:"memstore", label:"memory_store.py\n短期记忆", cat:"l2 cat-core", x:580, y:100,
+       desc:"Redis对话历史存储，TTL过期，多轮上下文管理"},
+      {id:"auth", label:"auth.py\nJWT鉴权", cat:"l2 cat-core", x:580, y:170,
+       desc:"JWT令牌验证，可选开启"},
+      {id:"filter", label:"content_filter.py\n内容过滤", cat:"l2 cat-core", x:580, y:240,
+       desc:"敏感词拦截，自定义屏蔽词列表"},
+      {id:"mysql", label:"mysql_store.py\n持久化", cat:"l2 cat-core", x:580, y:310,
+       desc:"MySQL对话记录持久化存储"},
+    ]},
+    {id:"infra", label:"🏗️ 基础设施", cat:"l1 cat-infra", x:350, y:620,
+     desc:"Docker容器化部署，四大存储组件",
+     children:[
+      {id:"milvus", label:"Milvus\n向量数据库", cat:"l2 cat-infra", x:150, y:560,
+       desc:"9009条向量，端口19530，支持增量/全量构建"},
+      {id:"neo4j", label:"Neo4j\n图数据库", cat:"l2 cat-infra", x:150, y:640,
+       desc:"6296节点+4022关系，端口7687，Cypher查询"},
+      {id:"redis", label:"Redis\n缓存", cat:"l2 cat-infra", x:150, y:720,
+       desc:"短期对话记忆，TTL 7天，端口6379"},
+      {id:"flask", label:"Flask\nWeb服务", cat:"l2 cat-infra", x:550, y:560,
+       desc:"SSE流式输出，REST API，文件上传，端口5000"},
+      {id:"docker", label:"Docker\n容器编排", cat:"l2 cat-infra", x:550, y:640,
+       desc:"app+Milvus+Neo4j+Redis四容器部署"},
+      {id:"mimo", label:"mimo-v2.5\nLLM API", cat:"l2 cat-infra", x:550, y:720,
+       desc:"小米大模型，reasoning模式，sk-密钥"},
+    ]},
+    {id:"feature", label:"✨ 核心特性", cat:"l1 cat-feature", x:1450, y:120,
+     desc:"系统功能亮点",
+     children:[
+      {id:"f1", label:"多轮对话\nQuery改写", cat:"l2 cat-feature", x:1250, y:30,
+       desc:"指代词识别→LLM改写为独立问题，避免每轮都多一次LLM调用"},
+      {id:"f2", label:"流式输出\nSSE", cat:"l2 cat-feature", x:1250, y:100,
+       desc:"Server-Sent Events逐块返回，前端实时显示"},
+      {id:"f3", label:"Reranker精排\nbge-reranker", cat:"l2 cat-feature", x:1250, y:170,
+       desc:"CrossEncoder对检索结果二次排序，保留top_k最相关结果"},
+      {id:"f4", label:"QA缓存\n0.999阈值", cat:"l2 cat-feature", x:1250, y:240,
+       desc:"Milvus向量相似度匹配，高相似度直接返回缓存答案"},
+      {id:"f5", label:"图谱增强\n多跳检索", cat:"l2 cat-feature", x:1250, y:310,
+       desc:"1-hop+2-hop图遍历，实体关系注入Prompt"},
+      {id:"f6", label:"兜底机制\nfallback", cat:"l2 cat-feature", x:1250, y:380,
+       desc:"LLM误判未找到→强制返回检索结果，空回答→补答"},
+      {id:"f7", label:"视觉问答\n图片识别", cat:"l2 cat-feature", x:1700, y:30,
+       desc:"Vision LLM支持图片+文字联合提问"},
+      {id:"f8", label:"JWT鉴权\n内容过滤", cat:"l2 cat-feature", x:1700, y:100,
+       desc:"可选登录鉴权+敏感词拦截"},
+      {id:"f9", label:"模型预加载\n消除首延迟", cat:"l2 cat-feature", x:1700, y:170,
+       desc:"启动时预热Embedding+Reranker模型"},
+      {id:"f10", label:"增量索引\n-参数", cat:"l2 cat-feature", x:1700, y:240,
+       desc:"支持增量更新，只索引新增文件"},
+      {id:"f11", label:"遗忘机制\nforget", cat:"l2 cat-feature", x:1700, y:310,
+       desc:"删除指定问题的缓存，重新生成答案"},
+      {id:"f12", label:"对话历史\n摘要压缩", cat:"l2 cat-feature", x:1700, y:380,
+       desc:"旧轮次LLM总结为摘要，控制上下文长度"},
+    ]},
+    {id:"pipeline", label:"🔄 RAG Pipeline流程", cat:"l1 cat-pipeline", x:1450, y:620,
+     desc:"核心处理流程",
+     children:[
+      {id:"p1", label:"1. 文档处理\nPDF→Chunks", cat:"l2 cat-pipeline", x:1100, y:530,
+       desc:"PyMuPDF/pdfplumber解析，分块300字符，重叠100"},
+      {id:"p2", label:"2. 混合检索\nBM25+Vec+Graph", cat:"l2 cat-pipeline", x:1100, y:610,
+       desc:"三路并行→归一化→加权融合→top_k"},
+      {id:"p3", label:"3. Reranker精排\nCrossEncoder", cat:"l2 cat-pipeline", x:1100, y:690,
+       desc:"query-document配对打分，保留最相关结果"},
+      {id:"p4", label:"4. Prompt构建\n图谱注入", cat:"l2 cat-pipeline", x:1100, y:770,
+       desc:"文档上下文+图谱三元组+问题→完整prompt"},
+      {id:"p5", label:"5. LLM生成\nmimo-v2.5", cat:"l2 cat-pipeline", x:1700, y:530,
+       desc:"流式/非流式生成，clean_answer去除Markdown"},
+      {id:"p6", label:"6. 缓存存储\nQA+Redis", cat:"l2 cat-pipeline", x:1700, y:610,
+       desc:"问答对存入Milvus QA缓存+Redis短期记忆"},
+      {id:"p7", label:"7. 流式输出\nSSE→前端", cat:"l2 cat-pipeline", x:1700, y:690,
+       desc:"逐chunk推送到浏览器，实时渲染"},
+      {id:"p8", label:"8. 评估验证\nLLM-as-Judge", cat:"l2 cat-pipeline", x:1700, y:770,
+       desc:"Context Precision≥0.8, Recall≥0.9, 响应≤3s"},
+    ]},
+    {id:"scripts", label:"📜 脚本入口 (scripts/)", cat:"l1 cat-script", x:350, y:870,
+     desc:"可执行脚本",
+     children:[
+      {id:"s1", label:"app.py\nFlask启动", cat:"l2 cat-script", x:100, y:830,
+       desc:"主入口，初始化全部组件，启动Web服务"},
+      {id:"s2", label:"build_index.py\n索引构建", cat:"l2 cat-script", x:100, y:900,
+       desc:"全量/增量构建Milvus索引+Neo4j图谱"},
+      {id:"s3", label:"build_graph_only.py\n图谱构建", cat:"l2 cat-script", x:350, y:950,
+       desc:"仅构建Neo4j图谱，不碰Milvus索引"},
+      {id:"s4", label:"evaluate.py\n评估脚本", cat:"l2 cat-script", x:550, y:830,
+       desc:"LLM-as-Judge评估precision/recall/响应时间"},
+      {id:"s5", label:"graph_visualization.py\n图谱可视化", cat:"l2 cat-script", x:550, y:900,
+       desc:"Neo4j导出→vis.js交互式关系图"},
+    ]},
+  ]
+};
+
+// ============ 渲染 ============
+var canvas = document.getElementById('canvas');
+var svgEl = document.getElementById('lines');
+var tooltip = document.getElementById('tooltip');
+var nodeMap = {};
+var collapsed = {};
+
+function render(){
+  // 清空
+  canvas.querySelectorAll('.node').forEach(function(n){n.remove();});
+  svgEl.innerHTML = '';
+  svgEl.setAttribute('width', canvas.scrollWidth);
+  svgEl.setAttribute('height', canvas.scrollHeight);
+
+  function drawNode(node, parent){
+    nodeMap[node.id] = node;
+    // 创建DOM
+    var el = document.createElement('div');
+    el.className = 'node ' + (node.cat||'');
+    el.textContent = node.label;
+    el.style.left = node.x + 'px';
+    el.style.top = node.y + 'px';
+    el.dataset.id = node.id;
+    canvas.appendChild(el);
+
+    // 绑定事件
+    el.addEventListener('mouseenter', function(e){
+      tooltip.style.display = 'block';
+      tooltip.querySelector('.tt-title').textContent = node.label.replace(/\n/g,' ');
+      tooltip.querySelector('.tt-desc').textContent = node.desc||'';
+      tooltip.style.left = (e.clientX+12)+'px';
+      tooltip.style.top = (e.clientY+12)+'px';
+    });
+    el.addEventListener('mousemove', function(e){
+      tooltip.style.left = (e.clientX+12)+'px';
+      tooltip.style.top = (e.clientY+12)+'px';
+    });
+    el.addEventListener('mouseleave', function(){tooltip.style.display='none';});
+
+    // 双击折叠/展开
+    if(node.children && node.children.length){
+      el.addEventListener('dblclick', function(){
+        collapsed[node.id] = !collapsed[node.id];
+        render();
+      });
+    }
+
+    // 画连线
+    if(parent){
+      var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      var px = parent.x + parent._w/2;
+      var py = parent.y + parent._h/2;
+      var cx = node.x + (node.cat||'').indexOf('l2')>=0 ? 50 : 60;
+      var cy = node.y + 15;
+      line.setAttribute('x1', px);
+      line.setAttribute('y1', py);
+      line.setAttribute('x2', node.x);
+      line.setAttribute('y2', node.y + 15);
+      line.setAttribute('stroke', '#333');
+      line.setAttribute('stroke-width', '1.5');
+      line.setAttribute('opacity', '0.6');
+      svgEl.appendChild(line);
+    }
+
+    // 记录尺寸（延迟获取）
+    requestAnimationFrame(function(){
+      node._w = el.offsetWidth;
+      node._h = el.offsetHeight;
+    });
+
+    // 递归子节点
+    if(node.children && !collapsed[node.id]){
+      node.children.forEach(function(c){ drawNode(c, node); });
+    }
+  }
+
+  drawNode(tree, null);
+}
+
+render();
+</script>
+</body>
+</html>

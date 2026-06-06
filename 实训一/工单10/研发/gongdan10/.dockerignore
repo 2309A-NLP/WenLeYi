@@ -1,0 +1,11 @@
+.idea
+__pycache__
+*.pyc
+.git
+.env
+.env.example
+finetune/
+vector_store/
+uploads/
+documents/
+*.md

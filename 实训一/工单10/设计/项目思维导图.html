@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>gongdan10 RAG 智能问答系统 - 思维导图</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f6fa}
+.bar{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px 24px;position:sticky;top:0;z-index:100}
+.bar h1{font-size:17px;font-weight:700}
+svg#L{position:absolute;top:0;left:0;pointer-events:none;z-index:1}
+.mm{position:relative;overflow:auto}
+.cc{position:absolute;z-index:10;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:18px;font-weight:700;padding:20px 36px;border-radius:50px;box-shadow:0 6px 24px rgba(102,126,234,.45);white-space:nowrap;text-align:center}
+/* 分支组 */
+.bg{position:absolute;z-index:5}
+/* 左侧分支：header在右，subs向左 */
+.bg.L{display:flex;flex-direction:row-reverse;align-items:center;gap:0}
+/* 右侧分支：header在左，subs向右 */
+.bg.R{display:flex;flex-direction:row;align-items:center;gap:0}
+/* header */
+.hd{padding:8px 14px;border-radius:8px;color:#fff;font-size:12.5px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.08);flex-shrink:0;display:inline-flex;align-items:center;gap:5px;background:var(--c);z-index:2}
+/* subs列 */
+.sc{display:flex;flex-direction:column;gap:2px;padding:0 6px}
+.su{background:#fff;padding:4px 10px;border-radius:5px;font-size:10.5px;line-height:1.4;color:#444;box-shadow:0 1px 4px rgba(0,0,0,.04);white-space:nowrap}
+.bg.L .su{border-left:3px solid var(--c)}
+.bg.R .su{border-right:3px solid var(--c);border-left:none}
+.lf{font-size:9.5px;color:#888;line-height:1.4;white-space:nowrap}
+.bg.L .lf{padding-left:10px}
+.bg.R .lf{padding-right:10px;text-align:right}
+.c0{--c:#E74C3C}.c1{--c:#E67E22}.c2{--c:#F39C12}.c3{--c:#2ECC71}
+.c4{--c:#1ABC9C}.c5{--c:#3498DB}.c6{--c:#9B59B6}.c7{--c:#E91E63}
+.c8{--c:#00BCD4}.c9{--c:#8BC34A}.c10{--c:#FF5722}.c11{--c:#607D8B}.c12{--c:#795548}
+</style>
+</head>
+<body>
+<div class="bar"><h1>🧠 gongdan10 · RAG 智能问答系统 · 全景思维导图</h1></div>
+<div class="mm" id="mm"><svg id="L"></svg><div class="cc" id="cc">RAG 智能问答系统</div></div>
+<script>
+const LD=[
+  {i:"🚀",t:"启动入口 scripts/",n:[
+    {x:"app.py Flask Web服务",f:["/api/query-stream-multi SSE流式","/api/suggestions 推荐问题","/api/upload 文件上传","JWT鉴权/HTTPS/屏蔽词"]},
+    {x:"build_index.py 索引构建",f:["扫描documents/目录","文档解析+清洗+分块","Embedding向量化 m3e-base","写入Milvus向量库"]}]},
+  {i:"⚙️",t:"配置中心 config.py",n:[{x:"从.env读取所有参数统一管理",f:[]}]},
+  {i:"📄",t:"文档处理 document_processor.py",n:[
+    {x:"PDF解析 pdfplumber+PyMuPDF",f:[]},{x:"DOCX解析 python-docx",f:[]},{x:"TXT解析",f:[]},
+    {x:"文本清洗流水线",f:["去水印/保密标记/装饰符号","去页眉页脚/页码","去特殊字符/乱码","清理表格噪音","CJK兼容字符归一化"]},
+    {x:"按字符分块 300字/块 重叠100字",f:[]}]},
+  {i:"🗄️",t:"向量存储 vector_store.py",n:[
+    {x:"VectorStore Milvus",f:["索引构建/查询/增量更新","Embedding模型 m3e-base","批量插入支持"]},
+    {x:"QuestionStore QA缓存",f:["历史问答相似度匹配","阈值 0.999"]}]},
+  {i:"🔍",t:"混合检索 retriever.py",n:[
+    {x:"BM25检索 jieba分词",f:[]},{x:"向量语义检索 Milvus",f:[]},{x:"Neo4j知识图谱检索",f:[]},
+    {x:"HybridRetriever 三路融合",f:["加权融合 BM25(0.4)+向量(0.6)+图谱(0.3)","RRF排名融合算法","并行检索 ThreadPoolExecutor"]},
+    {x:"相似度阈值过滤",f:[]}]},
+  {i:"📊",t:"重排序 reranker.py",n:[
+    {x:"本地Cross-Encoder模型",f:[]},{x:"模型 bge-reranker-base",f:[]}]},
+];
+const RD=[
+  {i:"🤖",t:"LLM调用 llm.py",n:[
+    {x:"OpenAI兼容接口",f:[]},{x:"流式输出 SSE",f:[]},{x:"图片输入 Vision",f:[]},{x:"模型 mimo-v2.5 小米",f:[]}]},
+  {i:"🔗",t:"RAG Pipeline rag.py",n:[
+    {x:"查询流程编排",f:["1. QA缓存检查","2. 混合检索","3. Reranker精排","4. 相关性过滤","5. LLM生成回答","6. 答案缓存"]},
+    {x:"多轮对话记忆 最多10轮",f:[]}]},
+  {i:"🧠",t:"记忆与图谱",n:[
+    {x:"memory_store.py 短期记忆",f:["Redis存储对话历史 TTL 7天"]},
+    {x:"graph_store.py 知识图谱检索",f:["Neo4j三元组查询"]},
+    {x:"graph_builder.py 图谱构建",f:["从文档构建知识图谱"]},
+    {x:"auth.py JWT鉴权",f:[]},{x:"content_filter.py 屏蔽词过滤",f:[]},
+    {x:"image_extractor.py 图片提取",f:["从PDF中提取图片并解析"]},
+    {x:"mysql_store.py MySQL持久化",f:[]}]},
+  {i:"🎯",t:"模型微调 finetune/",n:[
+    {x:"dataset_generator.py 数据集生成",f:[]},{x:"finetune.py 微调脚本",f:[]},
+    {x:"finetune_autodl.py AutoDL云端微调",f:[]},{x:"evaluate.py 评估脚本",f:[]},
+    {x:"run.py 本地运行",f:[]},{x:"setup_autodl.py AutoDL环境配置",f:[]}]},
+  {i:"🎨",t:"前端与静态资源",n:[
+    {x:"templates/ Web前端界面",f:[]},{x:"static/ 静态资源",f:[]},
+    {x:"uploads/ 上传文件",f:[]},{x:"certs/ SSL证书",f:[]}]},
+  {i:"🐳",t:"Docker部署",n:[
+    {x:"Dockerfile 镜像构建",f:[]},{x:".env.docker 环境配置",f:[]},
+    {x:"docker-compose.yml 服务编排",f:[]},{x:".dockerignore 构建排除",f:[]}]},
+  {i:"🌐",t:"外部依赖服务",n:[
+    {x:"Milvus 19530 向量数据库",f:[]},{x:"Redis 6379 缓存/短期记忆",f:[]},
+    {x:"Neo4j 7474/7687 知识图谱",f:[]},{x:"MySQL 3306 持久化(可选)",f:[]},
+    {x:"LLM API mimo-v2.5 小米",f:[]}]},
+];
+const CLR=["#E74C3C","#E67E22","#F39C12","#2ECC71","#1ABC9C","#3498DB","#9B59B6","#E91E63","#00BCD4","#8BC34A","#FF5722","#607D8B","#795548"];
+const mm=document.getElementById('mm'),svg=document.getElementById('L'),cc=document.getElementById('cc');
+
+function build(){
+  mm.querySelectorAll('.bg').forEach(b=>b.remove());
+  svg.innerHTML='';
+  const W=Math.max(1600,window.innerWidth);
+  mm.style.width=W+'px';
+  const cx=W/2, gap=22;
+
+  // 创建左侧分支组
+  let ly=60;
+  LD.forEach((b,i)=>{
+    const startY=ly;
+    const g=document.createElement('div');
+    g.className=`bg L c${i}`;
+    // header
+    const hd=document.createElement('div');hd.className='hd';
+    hd.innerHTML=`<span>${b.i}</span><span>${b.t}</span>`;
+    g.appendChild(hd);
+    // subs
+    const sc=document.createElement('div');sc.className='sc';
+    b.n.forEach(n=>{
+      const s=document.createElement('div');s.className='su';s.textContent=n.x;sc.appendChild(s);
+      (n.f||[]).forEach(f=>{const l=document.createElement('div');l.className='lf';l.textContent='• '+f;sc.appendChild(l)});
+    });
+    g.appendChild(sc);
+    g.style.left=(cx-70)+'px';g.style.top=startY+'px';
+    g.style.transform='translate(-100%,-50%)';
+    mm.appendChild(g);
+    ly=startY+g.offsetHeight+gap;
+  });
+
+  // 创建右侧分支组
+  let ry=60;
+  RD.forEach((b,i)=>{
+    const startY=ry;
+    const g=document.createElement('div');
+    g.className=`bg R c${i+LD.length}`;
+    const hd=document.createElement('div');hd.className='hd';
+    hd.innerHTML=`<span>${b.i}</span><span>${b.t}</span>`;
+    g.appendChild(hd);
+    const sc=document.createElement('div');sc.className='sc';
+    b.n.forEach(n=>{
+      const s=document.createElement('div');s.className='su';s.textContent=n.x;sc.appendChild(s);
+      (n.f||[]).forEach(f=>{const l=document.createElement('div');l.className='lf';l.textContent='• '+f;sc.appendChild(l)});
+    });
+    g.appendChild(sc);
+    g.style.left=(cx+70)+'px';g.style.top=startY+'px';
+    g.style.transform='translate(0,-50%)';
+    mm.appendChild(g);
+    ry=startY+g.offsetHeight+gap;
+  });
+
+  const H=Math.max(ly,ry)+40;
+  mm.style.height=H+'px';
+  svg.setAttribute('width',W);svg.setAttribute('height',H);
+  cc.style.left=cx+'px';cc.style.top=(H/2)+'px';cc.style.transform='translate(-50%,-50%)';
+
+  // 画连线
+  const mmR=mm.getBoundingClientRect();
+  const ccR=cc.getBoundingClientRect();
+  const ccx=ccR.left+ccR.width/2-mmR.left;
+  const ccy=ccR.top+ccR.height/2-mmR.top;
+
+  mm.querySelectorAll('.bg').forEach(g=>{
+    const hd=g.querySelector('.hd');
+    const hdR=hd.getBoundingClientRect();
+    const isL=g.classList.contains('L');
+    const hx=isL?hdR.left-mmR.left:hdR.right-mmR.left;
+    const hy=(hdR.top+hdR.height/2)-mmR.top;
+    const color=getComputedStyle(hd).getPropertyValue('background').match(/rgb\([^)]+\)/);
+    const stroke=color?color[0]:'#999';
+
+    // 中心→header
+    const x1=isL?ccx+14:ccx-14;
+    const mx=(x1+hx)/2;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M${x1},${ccy} C${mx},${ccy} ${mx},${hy} ${hx},${hy}`);
+    p.setAttribute('stroke',stroke);p.setAttribute('stroke-width','2.5');
+    p.setAttribute('fill','none');p.setAttribute('opacity','.4');
+    p.setAttribute('stroke-linecap','round');
+    svg.appendChild(p);
+
+    // header→每个sub
+    g.querySelectorAll('.su').forEach(su=>{
+      const sr=su.getBoundingClientRect();
+      const sx=isL?sr.left-mmR.left:sr.right-mmR.left;
+      const sy=(sr.top+sr.height/2)-mmR.top;
+      const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+      l.setAttribute('x1',String(hx));l.setAttribute('y1',String(hy));
+      l.setAttribute('x2',String(sx));l.setAttribute('y2',String(sy));
+      l.setAttribute('stroke',stroke);l.setAttribute('stroke-width','1.5');
+      l.setAttribute('opacity','.25');l.setAttribute('stroke-linecap','round');
+      svg.appendChild(l);
+    });
+  });
+}
+build();
+window.addEventListener('resize',()=>setTimeout(build,100));
+</script>
+</body>
+</html>
