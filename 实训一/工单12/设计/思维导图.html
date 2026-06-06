@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>RAG 工单12 项目思维导图</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:#fff;width:100vw;height:100vh;overflow:hidden}
+canvas{display:block}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const c=document.getElementById('c');
+const ctx=c.getContext('2d');
+const dpr=window.devicePixelRatio||1;
+const W=window.innerWidth, H=window.innerHeight;
+c.width=W*dpr; c.height=H*dpr;
+c.style.width=W+'px'; c.style.height=H+'px';
+ctx.scale(dpr,dpr);
+
+const data={
+  text:'RAG 工单12\n智能问答系统',
+  children:[
+    {text:'文档处理层',children:[
+      {text:'PDF解析'},
+      {text:'文档清洗'},
+      {text:'智能分块'}
+    ]},
+    {text:'索引存储层',children:[
+      {text:'Milvus向量库'},
+      {text:'BM25索引'},
+      {text:'Neo4j图谱'}
+    ]},
+    {text:'检索层',children:[
+      {text:'向量检索'},
+      {text:'BM25检索'},
+      {text:'图谱检索'},
+      {text:'RRF融合'},
+      {text:'Reranker精排'}
+    ]},
+    {text:'生成层',children:[
+      {text:'Query改写'},
+      {text:'多轮对话'},
+      {text:'LLM生成'},
+      {text:'流式输出'}
+    ]},
+    {text:'LightRAG优化',children:[
+      {text:'图谱构建'},
+      {text:'双层检索'},
+      {text:'RAGAS评估'},
+      {text:'图谱可视化'}
+    ]},
+    {text:'基础设施',children:[
+      {text:'Docker部署'},
+      {text:'Flask Web UI'},
+      {text:'JWT鉴权'}
+    ]}
+  ]
+};
+
+const palette=[
+  {main:'#5B8FF9',light:'#D6E4FF',dark:'#1D4ED8'},  // 蓝
+  {main:'#5AD8A6',light:'#D6F5E4',dark:'#059669'},  // 绿
+  {main:'#F6BD16',light:'#FEF3C7',dark:'#D97706'},  // 黄
+  {main:'#E86452',light:'#FEE2E2',dark:'#DC2626'},  // 红
+  {main:'#9270CA',light:'#EDE9FE',dark:'#7C3AED'},  // 紫
+  {main:'#6DC8EC',light:'#E0F2FE',dark:'#0284C7'},  // 青
+];
+
+const leftKids=data.children.slice(0,3);
+const rightKids=data.children.slice(3);
+
+const rootX=W/2, rootY=H/2;
+const L1_GAP=90;
+const L2_GAP=38;
+const L1_DX=240;
+const L2_DX=170;
+
+function layoutSide(kids,dir){
+  // Calculate total height needed
+  let totalH=0;
+  kids.forEach(k=>{
+    const subH=(k.children?k.children.length:0)*L2_GAP;
+    totalH+=Math.max(subH,50);
+  });
+  totalH+=(kids.length-1)*30;
+
+  let y=rootY-totalH/2;
+  kids.forEach((k,i)=>{
+    const subH=(k.children?k.children.length:0)*L2_GAP;
+    const nodeH=Math.max(subH,50);
+    k._x=rootX+dir*L1_DX;
+    k._y=y+nodeH/2;
+    k._color=palette[i];
+    if(k.children){
+      let sy=k._y-subH/2;
+      k.children.forEach(ch=>{
+        ch._x=k._x+dir*L2_DX;
+        ch._y=sy+L2_GAP/2;
+        ch._color=palette[i];
+        sy+=L2_GAP;
+      });
+    }
+    y+=nodeH+30;
+  });
+}
+
+layoutSide(leftKids,-1);
+layoutSide(rightKids,1);
+
+// Drawing helpers
+function roundRect(x,y,w,h,r,fill,stroke,lw){
+  ctx.beginPath();
+  ctx.roundRect(x,y,w,h,r);
+  if(fill){ctx.fillStyle=fill;ctx.fill();}
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||2;ctx.stroke();}
+}
+
+function text(x,y,str,color,size,align,bold){
+  ctx.fillStyle=color||'#333';
+  ctx.font=(bold?'bold ':'')+size+'px "Microsoft YaHei"';
+  ctx.textAlign=align||'center';
+  ctx.textBaseline='middle';
+  const lines=str.split('\n');
+  lines.forEach((l,i)=>{
+    ctx.fillText(l,x,y+(i-(lines.length-1)/2)*(size+4));
+  });
+}
+
+function bezier(x1,y1,x2,y2,color,w){
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  const mx=(x1+x2)/2;
+  ctx.bezierCurveTo(mx,y1,mx,y2,x2,y2);
+  ctx.strokeStyle=color;
+  ctx.lineWidth=w||2;
+  ctx.stroke();
+}
+
+// === Draw connections (behind nodes) ===
+data.children.forEach(kid=>{
+  // Root to L1
+  bezier(rootX,rootY,kid._x,kid._y,kid._color.main+'88',2.5);
+  // L1 to L2
+  if(kid.children){
+    kid.children.forEach(ch=>{
+      bezier(kid._x,kid._y,ch._x,ch._y,kid._color.main+'66',1.5);
+    });
+  }
+});
+
+// === Draw L2 nodes (background, rounded rect) ===
+data.children.forEach(kid=>{
+  if(!kid.children) return;
+  kid.children.forEach(ch=>{
+    const tw=ctx.measureText?0:0;
+    ctx.font='12px "Microsoft YaHei"';
+    const m=ctx.measureText(ch.text);
+    const w=m.width+32;
+    const h=32;
+    // Shadow
+    ctx.shadowColor=kid._color.main+'33';
+    ctx.shadowBlur=6;
+    ctx.shadowOffsetY=2;
+    roundRect(ch._x-w/2,ch._y-h/2,w,h,16,kid._color.light,kid._color.main+'88',1.5);
+    ctx.shadowColor='transparent';
+    ctx.shadowBlur=0;
+    ctx.shadowOffsetY=0;
+    text(ch._x,ch._y,ch.text,kid._color.dark,12,'center',false);
+  });
+});
+
+// === Draw L1 nodes ===
+data.children.forEach(kid=>{
+  ctx.font='bold 14px "Microsoft YaHei"';
+  const m=ctx.measureText(kid.text.split('\n')[0]);
+  const w=m.width+36;
+  const h=40;
+  // Shadow
+  ctx.shadowColor=kid._color.main+'44';
+  ctx.shadowBlur=10;
+  ctx.shadowOffsetY=3;
+  roundRect(kid._x-w/2,kid._y-h/2,w,h,20,kid._color.main,null,0);
+  ctx.shadowColor='transparent';
+  ctx.shadowBlur=0;
+  ctx.shadowOffsetY=0;
+  // Border
+  roundRect(kid._x-w/2,kid._y-h/2,w,h,20,null,kid._color.dark,2);
+  text(kid._x,kid._y,kid.text,'#fff',14,'center',true);
+});
+
+// === Draw root node ===
+const rw=180, rh=60;
+// Gradient shadow
+const grd=ctx.createRadialGradient(rootX,rootY+10,10,rootX,rootY+10,100);
+grd.addColorStop(0,'#6366f133');
+grd.addColorStop(1,'transparent');
+ctx.fillStyle=grd;
+ctx.fillRect(rootX-100,rootY-60,200,140);
+
+ctx.shadowColor='#6366f144';
+ctx.shadowBlur=20;
+ctx.shadowOffsetY=4;
+roundRect(rootX-rw/2,rootY-rh/2,rw,rh,30,'#6366f1',null,0);
+ctx.shadowColor='transparent';
+ctx.shadowBlur=0;
+ctx.shadowOffsetY=0;
+roundRect(rootX-rw/2,rootY-rh/2,rw,rh,30,null,'#4F46E5',2.5);
+text(rootX,rootY-10,'RAG 工单12','#fff',17,'center',true);
+text(rootX,rootY+12,'智能问答系统','#E0E7FF',13,'center',false);
+</script>
+</body>
+</html>
