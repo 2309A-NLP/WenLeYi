@@ -1,0 +1,72 @@
+{
+  "timestamp": "2026-06-07T21:39:35.460929",
+  "config": {
+    "llm_model": "deepseek-v4-flash",
+    "search_mode": "hybrid",
+    "reranker_enabled": true,
+    "neo4j_enabled": true,
+    "top_k": 8,
+    "rerank_top_k": 3,
+    "faiss_top_k": 8,
+    "bm25_top_k": 8
+  },
+  "questions": [
+    {
+      "question": "公司的组织架构是什么？",
+      "total_seconds": 0.067,
+      "answer_length": 16
+    },
+    {
+      "question": "销售部有哪些部门？",
+      "total_seconds": 0.063,
+      "answer_length": 16
+    },
+    {
+      "question": "大客户销售部由哪些销售处构成？",
+      "total_seconds": 0.068,
+      "answer_length": 16
+    },
+    {
+      "question": "公司的主要业务有哪些？",
+      "total_seconds": 0.065,
+      "answer_length": 16
+    },
+    {
+      "question": "2024年的营业收入是多少？",
+      "total_seconds": 0.066,
+      "answer_length": 16
+    },
+    {
+      "question": "公司的核心竞争力是什么？",
+      "total_seconds": 0.065,
+      "answer_length": 16
+    },
+    {
+      "question": "公司的风险管理措施有哪些？",
+      "total_seconds": 0.068,
+      "answer_length": 16
+    },
+    {
+      "question": "公司的研发投入情况如何？",
+      "total_seconds": 0.069,
+      "answer_length": 16
+    },
+    {
+      "question": "公司的客户群体主要有哪些？",
+      "total_seconds": 0.093,
+      "answer_length": 16
+    },
+    {
+      "question": "公司的未来发展战略是什么？",
+      "total_seconds": 0.067,
+      "answer_length": 16
+    }
+  ],
+  "overall": {
+    "avg_seconds": 0.069,
+    "min_seconds": 0.063,
+    "max_seconds": 0.093,
+    "pass_rate": "10/10",
+    "target_seconds": 3
+  }
+}

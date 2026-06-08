@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 智能问答</title>
+<style>
+:root{--bg:#f0f2f5;--card:#fff;--text:#1a1a2e;--text2:#666;--border:#e0e0e0;--accent:#4f46e5;--accent2:#7c3aed;--user-bg:#4f46e5;--user-text:#fff;--bot-bg:#fff;--bot-text:#1a1a2e;--input-bg:#fff;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:16px;--sidebar:#fff;--sidebar-hover:#f5f5f5;--sidebar-active:#e8e5ff}
+[data-theme="dark"]{--bg:#0f0f23;--card:#1a1a2e;--text:#e0e0e0;--text2:#999;--border:#2a2a4a;--accent:#7c3aed;--accent2:#a855f7;--user-bg:#7c3aed;--user-text:#fff;--bot-bg:#1a1a2e;--bot-text:#e0e0e0;--input-bg:#1a1a2e;--shadow:0 2px 12px rgba(0,0,0,.3);--sidebar:#1a1a2e;--sidebar-hover:#2a2a4a;--sidebar-active:#3a2a5a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;transition:all .3s}
+.sidebar{width:260px;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-header{padding:16px;border-bottom:1px solid var(--border)}
+.new-chat-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500}
+.new-chat-btn:hover{opacity:.9}
+.history-list{flex:1;overflow-y:auto;padding:8px}
+.history-group-title{font-size:11px;color:var(--text2);padding:8px 12px 4px;text-transform:uppercase;letter-spacing:.5px}
+.history-item{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text2);display:flex;align-items:center;gap:6px;min-height:36px}
+.history-item:hover{background:var(--sidebar-hover);color:var(--text)}
+.history-item.active{background:var(--sidebar-active);color:var(--accent);font-weight:500}
+.history-title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-actions{display:flex;gap:2px;opacity:0;transition:opacity .15s;flex-shrink:0}
+.history-item:hover .history-actions,.history-item.active .history-actions{opacity:1}
+.history-actions button{width:24px;height:24px;border:none;border-radius:6px;background:transparent;color:var(--text2);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.history-actions button:hover{background:var(--border);color:var(--text)}
+.sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.header{background:var(--card);padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);z-index:10}
+.header h1{font-size:18px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-right{display:flex;gap:8px}
+.icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
+.icon-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chat-container{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.welcome{text-align:center;padding:60px 20px;color:var(--text2)}
+.welcome h2{font-size:24px;margin-bottom:8px;color:var(--text)}
+.suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px}
+.suggestion-chip{padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:13px;transition:all .2s}
+.suggestion-chip:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.msg-row{display:flex;gap:8px;max-width:85%;align-self:flex-start}
+.msg-row.user{align-self:flex-end;flex-direction:row-reverse}
+.msg-avatar{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.msg-row.bot .msg-avatar{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.msg-row.user .msg-avatar{background:#e0e7ff;color:var(--accent)}
+[data-theme="dark"] .msg-row.user .msg-avatar{background:#2a2a4a;color:var(--accent2)}
+.msg-bubble{padding:12px 16px;border-radius:var(--radius);line-height:1.7;font-size:14px;word-break:break-word;white-space:pre-wrap}
+.msg-row.bot .msg-bubble{background:var(--bot-bg);color:var(--bot-text);border:1px solid var(--border);border-bottom-left-radius:4px}
+.msg-row.user .msg-bubble{background:var(--user-bg);color:var(--user-text);border-bottom-right-radius:4px}
+.msg-actions{display:flex;gap:4px;margin-top:6px;justify-content:flex-end}
+.msg-actions button{padding:4px 8px;border:none;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;border-radius:6px;transition:all .2s}
+.msg-actions button:hover{background:var(--border);color:var(--text)}
+.msg-meta{font-size:11px;color:var(--text2);text-align:right;margin-top:4px;font-style:italic}
+.image-preview{max-width:200px;max-height:150px;border-radius:8px;margin-bottom:8px;object-fit:cover}
+.typing{display:flex;gap:4px;padding:8px 12px}
+.typing span{width:8px;height:8px;border-radius:50%;background:var(--text2);animation:bounce .6s infinite alternate}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{to{opacity:.3;transform:translateY(-4px)}}
+.input-area{padding:12px 20px;background:var(--card);border-top:1px solid var(--border);box-shadow:0 -2px 12px rgba(0,0,0,.05)}
+.image-bar{display:none;padding:8px 0;align-items:center;gap:8px}
+.image-bar.show{display:flex}
+.image-bar img{height:60px;border-radius:8px;object-fit:cover}
+.image-bar .remove-img{cursor:pointer;color:#ef4444;font-size:18px}
+.input-row{display:flex;gap:8px;align-items:center}
+.input-row input{flex:1;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-size:15px;background:var(--input-bg);color:var(--text);outline:none;transition:border .2s}
+.input-row input:focus{border-color:var(--accent)}
+.send-btn{width:44px;height:44px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;cursor:pointer;font-size:18px;transition:transform .1s}
+.send-btn:hover{transform:scale(1.05)}
+.recording{animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 12px rgba(239,68,68,0)}}
+.upload-panel{display:none;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin:0 20px 12px}
+.upload-panel.show{display:block}
+.upload-panel h3{font-size:14px;margin-bottom:8px;color:var(--text)}
+.upload-zone{border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;color:var(--text2);font-size:13px}
+.upload-zone:hover{border-color:var(--accent);background:rgba(79,70,229,.05)}
+.upload-zone.dragover{border-color:var(--accent);background:rgba(79,70,229,.1)}
+.doc-list{margin-top:8px;max-height:120px;overflow-y:auto}
+.doc-item{display:flex;justify-content:space-between;padding:4px 8px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <button class="new-chat-btn" onclick="newChat()">+ 新建对话</button>
+  </div>
+  <div class="history-list" id="historyList"></div>
+  <div class="sidebar-footer">
+    <button class="icon-btn" id="langBtn" onclick="toggleLang()" title="切换语言">中</button>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="切换主题">🌙</button>
+    <button class="icon-btn" onclick="toggleUpload()" title="文件管理">📁</button>
+  </div>
+</div>
+<div class="main">
+  <div class="header">
+    <h1 id="title">📚 RAG 智能问答</h1>
+    <div class="header-right">
+      <button class="icon-btn" onclick="clearChat()" title="清空对话">🗑️</button>
+    </div>
+  </div>
+  <div class="upload-panel" id="uploadPanel">
+    <h3>📄 文档管理</h3>
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('docInput').click()">拖拽文件到此处或点击上传（支持 PDF/Word/TXT）</div>
+    <input type="file" id="docInput" multiple accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="uploadDocs(event)">
+    <div class="doc-list" id="docList"></div>
+  </div>
+  <div class="chat-container" id="chat">
+    <div class="welcome" id="welcomeArea">
+      <h2 id="welcomeTitle">👋 你好！有什么可以帮你的？</h2>
+      <p id="welcomeSub">我可以帮你检索和分析文档内容</p>
+      <div class="suggestions" id="suggestions"></div>
+    </div>
+  </div>
+  <div class="input-area">
+    <div class="image-bar" id="imageBar">
+      <img id="previewImg" src="">
+      <span class="remove-img" onclick="removeImage()">✕</span>
+    </div>
+    <div class="input-row">
+      <button class="icon-btn" onclick="document.getElementById('fileInput').click()" title="上传图片">🖼️</button>
+      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleImage(event)">
+      <button class="icon-btn" id="voiceBtn" onclick="toggleVoice()" title="语音输入">🎤</button>
+      <input type="text" id="input" placeholder="输入你的问题..." onkeypress="if(event.key==='Enter')send()">
+      <button class="send-btn" onclick="send()">➤</button>
+    </div>
+  </div>
+</div>
+<script>
+var lang = localStorage.getItem('rag_lang') || 'zh';
+var theme = localStorage.getItem('rag_theme') || 'light';
+var uploadedImage = '';
+var recognizing = false;
+var recognition = null;
+var currentChatId = null;
+
+var i18n = {
+  zh: {
+    title: '📚 RAG 智能问答',
+    welcome: '👋 你好！有什么可以帮你的？',
+    sub: '我可以帮你检索和分析文档内容',
+    placeholder: '输入你的问题...',
+    copy: '复制',
+    read: '朗读',
+    copied: '已复制',
+    langBtn: '中',
+    themeTitle: '切换主题',
+    clearTitle: '清空对话',
+    newChat: '+ 新建对话',
+    uploadTitle: '📂 文件管理',
+    uploadZone: '拖拽文件到此处或点击上传（支持 PDF/Word/TXT）',
+    imageTitle: '上传图片',
+    voiceTitle: '语音输入',
+    uploading: '上传中...',
+    uploadSuccess: '上传成功，已更新索引',
+    uploadFail: '上传失败',
+    noAnswer: '未生成答案，请重试或查看服务日志。',
+    requestFail: '请求失败，请重试',
+    recognizeImage: '识别图片',
+    searchTime: '检索耗时',
+    renamePrompt: '请输入新的会话名称',
+    deleteConfirm: '确定删除这个会话吗？',
+    clearConfirm: '确定删除所有会话吗？',
+    micNotSupported: '浏览器不支持语音输入。\n\n请使用 Chrome 浏览器并用 http://localhost:5000 访问。',
+    micDenied: '麦克风权限被拒绝。\n\n请在浏览器地址栏左侧点击锁图标 -> 允许麦克风访问。',
+    micNetwork: '语音服务不可用。\n\n请检查网络连接，或使用 Chrome 浏览器。',
+    micServiceDenied: '语音服务被禁止。\n\n请使用 Chrome 浏览器访问。',
+    defaultChat: '新对话',
+    today: '今天',
+    yesterday: '昨天',
+    earlier: '更早',
+    suggestions: [
+      '这份文档的主要内容是什么？',
+      '文档中提到了哪些关键数据？',
+      '请总结一下文档的核心要点',
+      '文档中有哪些重要的时间节点？',
+      '这份文档的风险因素有哪些？'
+    ]
+  },
+  en: {
+    title: '📚 RAG Q&A',
+    welcome: '👋 Hello! How can I help?',
+    sub: 'I can help you search and analyze documents',
+    placeholder: 'Type your question...',
+    copy: 'Copy',
+    read: 'Read',
+    copied: 'Copied!',
+    langBtn: 'EN',
+    themeTitle: 'Toggle theme',
+    clearTitle: 'Clear chat',
+    newChat: '+ New Chat',
+    uploadTitle: '📂 Files',
+    uploadZone: 'Drop files here or click to upload (PDF/Word/TXT supported)',
+    imageTitle: 'Upload image',
+    voiceTitle: 'Voice input',
+    uploading: 'Uploading...',
+    uploadSuccess: 'Upload complete, index updated',
+    uploadFail: 'Upload failed',
+    noAnswer: 'No answer generated. Please try again or check the service logs.',
+    requestFail: 'Request failed. Please try again.',
+    recognizeImage: 'Recognize image',
+    searchTime: 'Search time',
+    renamePrompt: 'Enter a new chat name',
+    deleteConfirm: 'Delete this chat?',
+    clearConfirm: 'Delete all chats?',
+    micNotSupported: 'Voice input is not supported in this browser.\n\nPlease use Chrome and visit http://localhost:5000.',
+    micDenied: 'Microphone permission denied.\n\nPlease click the lock icon in the browser address bar and allow microphone access.',
+    micNetwork: 'Speech service unavailable.\n\nPlease check your network connection or use Chrome.',
+    micServiceDenied: 'Speech service disabled.\n\nPlease use Chrome to access this app.',
+    defaultChat: 'New chat',
+    today: 'Today',
+    yesterday: 'Yesterday',
+    earlier: 'Earlier',
+    suggestions: [
+      'What is the main topic of this document?',
+      'Which key data points are mentioned?',
+      'Please summarize the core takeaways',
+      'What important time points are included?',
+      'What are the risk factors in this document?'
+    ]
+  }
+};
+
+function tr() {
+  return i18n[lang] || i18n.zh;
+}
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+function setText(selector, value) {
+  var el = document.querySelector(selector);
+  if (el) el.textContent = value;
+}
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('rag_history') || '[]'); } catch (e) { return []; }
+}
+
+function saveHistory(h) {
+  localStorage.setItem('rag_history', JSON.stringify(h));
+}
+
+function refreshMessageActions() {
+  var t = tr();
+  document.querySelectorAll('.msg-actions').forEach(function(actions) {
+    var buttons = actions.querySelectorAll('button');
+    if (buttons[0]) buttons[0].textContent = t.copy;
+    if (buttons[1]) buttons[1].textContent = t.read;
+  });
+}
+
+function applyLang() {
+  var t = tr();
+  document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
+  document.title = t.title;
+  setText('#title', t.title);
+  setText('#welcomeTitle', t.welcome);
+  setText('#welcomeSub', t.sub);
+
+  var input = $('input');
+  if (input) input.placeholder = t.placeholder;
+
+  var langBtn = $('langBtn');
+  if (langBtn) langBtn.textContent = t.langBtn;
+
+  var themeBtn = $('themeBtn');
+  if (themeBtn) themeBtn.title = t.themeTitle;
+
+  var clearBtn = document.querySelector('.header-right .icon-btn');
+  if (clearBtn) clearBtn.title = t.clearTitle;
+
+  var newChatBtn = document.querySelector('.sidebar-header .new-chat-btn');
+  if (newChatBtn) newChatBtn.textContent = t.newChat;
+
+  var uploadTitle = document.querySelector('#uploadPanel h3');
+  if (uploadTitle) uploadTitle.textContent = t.uploadTitle;
+
+  var uploadZone = $('uploadZone');
+  if (uploadZone && uploadZone.dataset.state !== 'busy') uploadZone.textContent = t.uploadZone;
+
+  var uploadImgBtn = document.querySelector('.input-row .icon-btn');
+  if (uploadImgBtn) uploadImgBtn.title = t.imageTitle;
+
+  var voiceBtn = $('voiceBtn');
+  if (voiceBtn) voiceBtn.title = t.voiceTitle;
+
+  refreshMessageActions();
+}
+
+function toggleLang() {
+  lang = (lang === 'zh') ? 'en' : 'zh';
+  localStorage.setItem('rag_lang', lang);
+  applyLang();
+  loadSuggestions();
+  renderHistory();
+}
+
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', theme);
+  var btn = $('themeBtn');
+  if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+function toggleTheme() {
+  theme = (theme === 'light') ? 'dark' : 'light';
+  localStorage.setItem('rag_theme', theme);
+  applyTheme();
+}
+
+function getCurrentChat() {
+  var h = getHistory();
+  if (!currentChatId) {
+    currentChatId = 'chat_' + Date.now();
+    h.unshift({ id: currentChatId, title: tr().defaultChat, messages: [], time: Date.now() });
+    saveHistory(h);
+    renderHistory();
+  }
+  return h.find(function(c) { return c.id === currentChatId; });
+}
+
+function renderHistory() {
+  var h = getHistory();
+  var list = $('historyList');
+  if (!list) return;
+  list.innerHTML = '';
+  var t = tr();
+  var now = new Date();
+  var today = now.toDateString();
+  var yesterday = new Date(now - 86400000).toDateString();
+  var groups = { today: [], yesterday: [], earlier: [] };
+
+  h.forEach(function(c) {
+    var d = new Date(c.time);
+    if (d.toDateString() === today) groups.today.push(c);
+    else if (d.toDateString() === yesterday) groups.yesterday.push(c);
+    else groups.earlier.push(c);
+  });
+
+  [['today', t.today], ['yesterday', t.yesterday], ['earlier', t.earlier]].forEach(function(pair) {
+    var key = pair[0];
+    if (groups[key].length === 0) return;
+    var title = document.createElement('div');
+    title.className = 'history-group-title';
+    title.textContent = pair[1];
+    list.appendChild(title);
+
+    groups[key].forEach(function(c) {
+      var item = document.createElement('div');
+      item.className = 'history-item' + (c.id === currentChatId ? ' active' : '');
+
+      var name = document.createElement('div');
+      name.className = 'history-title';
+      name.textContent = c.title || t.defaultChat;
+      name.onclick = function() { loadChat(c.id); };
+
+      var actions = document.createElement('div');
+      actions.className = 'history-actions';
+
+      var rename = document.createElement('button');
+      rename.type = 'button';
+      rename.textContent = '✎';
+      rename.title = '重命名';
+      rename.onclick = function(e) { e.stopPropagation(); renameChat(c.id); };
+
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.textContent = '×';
+      del.title = '删除';
+      del.onclick = function(e) { e.stopPropagation(); deleteChat(c.id); };
+
+      actions.appendChild(rename);
+      actions.appendChild(del);
+      item.appendChild(name);
+      item.appendChild(actions);
+      list.appendChild(item);
+    });
+  });
+}
+
+function loadChat(id) {
+  currentChatId = id;
+  var h = getHistory();
+  var c = h.find(function(x) { return x.id === id; });
+  if (!c) return;
+  var chatDiv = $('chat');
+  chatDiv.innerHTML = '';
+  if (c.messages.length === 0) {
+    showWelcome();
+  } else {
+    c.messages.forEach(function(m) { addMsgToDOM(m.text, m.isUser, m.image || ''); });
+  }
+  renderHistory();
+}
+
+function newChat() {
+  currentChatId = null;
+  $('chat').innerHTML = '';
+  showWelcome();
+  renderHistory();
+}
+
+function showWelcome() {
+  var chatDiv = $('chat');
+  var d = document.createElement('div');
+  d.className = 'welcome';
+  d.id = 'welcomeArea';
+  d.innerHTML = '<h2 id="welcomeTitle"></h2><p id="welcomeSub"></p><div class="suggestions" id="suggestions"></div>';
+  chatDiv.appendChild(d);
+  applyLang();
+  loadSuggestions();
+}
+
+function addMessageToHistory(text, isUser, image) {
+  var c = getCurrentChat();
+  c.messages.push({ text: text, isUser: isUser, image: image || '' });
+  if (isUser && c.messages.length <= 2 && !c.renamed) {
+    c.title = text.substring(0, 20) + (text.length > 20 ? '...' : '');
+  }
+  var h = getHistory();
+  for (var i = 0; i < h.length; i++) {
+    if (h[i].id === currentChatId) {
+      h[i] = c;
+      break;
+    }
+  }
+  saveHistory(h);
+  renderHistory();
+}
+
+function toggleUpload() {
+  var p = $('uploadPanel');
+  p.classList.toggle('show');
+  if (p.classList.contains('show')) {
+    applyLang();
+    loadDocs();
+  }
+}
+
+function loadDocs() {
+  fetch('/api/documents').then(function(r) { return r.json(); }).then(function(data) {
+    var list = $('docList');
+    list.innerHTML = '';
+    (data.documents || []).forEach(function(d) {
+      var item = document.createElement('div');
+      item.className = 'doc-item';
+      item.innerHTML = '<span>' + d.name + '</span><span>' + d.size + '</span>';
+      list.appendChild(item);
+    });
+  }).catch(function() {});
+}
+
+function setUploadState(text, state) {
+  var zone = $('uploadZone');
+  if (!zone) return;
+  zone.dataset.state = state || 'idle';
+  zone.textContent = text;
+}
+
+function uploadDocs(e) {
+  var files = e.target.files;
+  if (!files.length) return;
+  var fd = new FormData();
+  for (var i = 0; i < files.length; i++) fd.append('files', files[i]);
+  var zone = $('uploadZone');
+  var t = tr();
+  setUploadState(t.uploading, 'busy');
+  fetch('/api/upload', { method: 'POST', body: fd }).then(function(r) { return r.json(); }).then(function() {
+    setUploadState(t.uploadSuccess, 'idle');
+    loadDocs();
+    setTimeout(function() {
+      if ($('uploadZone')) setUploadState(tr().uploadZone, 'idle');
+    }, 2000);
+  }).catch(function() {
+    setUploadState(t.uploadFail, 'idle');
+  });
+  e.target.value = '';
+}
+
+var uz = $('uploadZone');
+if (uz) {
+  uz.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    uz.classList.add('dragover');
+  });
+  uz.addEventListener('dragleave', function() {
+    uz.classList.remove('dragover');
+  });
+  uz.addEventListener('drop', function(e) {
+    e.preventDefault();
+    uz.classList.remove('dragover');
+    var files = e.dataTransfer.files;
+    if (!files.length) return;
+    var fd = new FormData();
+    for (var i = 0; i < files.length; i++) fd.append('files', files[i]);
+    setUploadState(tr().uploading, 'busy');
+    fetch('/api/upload', { method: 'POST', body: fd }).then(function(r) { return r.json(); }).then(function() {
+      setUploadState(tr().uploadSuccess, 'idle');
+      loadDocs();
+      setTimeout(function() {
+        if ($('uploadZone')) setUploadState(tr().uploadZone, 'idle');
+      }, 2000);
+    }).catch(function() {
+      setUploadState(tr().uploadFail, 'idle');
+    });
+  });
+}
+
+function addMsgToDOM(text, isUser, image) {
+  var chat = $('chat');
+  var w = $('welcomeArea');
+  if (w) w.remove();
+
+  var row = document.createElement('div');
+  row.className = 'msg-row ' + (isUser ? 'user' : 'bot');
+
+  var avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = isUser ? '🧑' : '🤖';
+
+  var bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+
+  if (image) {
+    var img = document.createElement('img');
+    img.src = image;
+    img.className = 'image-preview';
+    bubble.appendChild(img);
+  }
+
+  var textDiv = document.createElement('div');
+  textDiv.textContent = text;
+  bubble.appendChild(textDiv);
+
+  if (!isUser) {
+    var actions = document.createElement('div');
+    actions.className = 'msg-actions';
+    var t = tr();
+    actions.innerHTML = '<button onclick="copyText(this)">' + t.copy + '</button><button onclick="speakText(this)">' + t.read + '</button>';
+    bubble.appendChild(actions);
+  }
+
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+  return bubble;
+}
+
+function addMsg(text, isUser, image) {
+  addMessageToHistory(text, isUser, image);
+  return addMsgToDOM(text, isUser, image);
+}
+
+function sendStream(question) {
+  var chat = $('chat');
+  var w = $('welcomeArea');
+  if (w) w.remove();
+
+  var row = document.createElement('div');
+  row.className = 'msg-row bot';
+  var avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = '🤖';
+  var bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  var textDiv = document.createElement('div');
+  textDiv.textContent = '';
+  bubble.appendChild(textDiv);
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+
+  var fullText = '';
+  var retrieveTime = 0;  // 存储检索时间
+  var startTime = Date.now();
+  var evtSource = new EventSource('/api/query-stream-multi?q=' + encodeURIComponent(question) + '&chat_id=' + encodeURIComponent(currentChatId || 'default'));
+  evtSource.onmessage = function(e) {
+    if (e.data === '[DONE]') {
+      evtSource.close();
+      if (!fullText.trim()) {
+        fullText = tr().noAnswer;
+        textDiv.textContent = fullText;
+      }
+      var elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+      var now = new Date();
+      var timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+      var meta = document.createElement('div');
+      meta.className = 'msg-meta';
+      // 显示检索时间
+      var displayTime = retrieveTime > 0 ? retrieveTime.toFixed(2) : elapsed;
+      meta.textContent = tr().searchTime + ': ' + displayTime + 's | ' + timeStr;
+      bubble.appendChild(meta);
+      addMessageToHistory(fullText, false, '');
+      var actions = document.createElement('div');
+      actions.className = 'msg-actions';
+      var t = tr();
+      actions.innerHTML = '<button onclick="copyText(this)">' + t.copy + '</button><button onclick="speakText(this)">' + t.read + '</button>';
+      bubble.appendChild(actions);
+      return;
+    }
+    try {
+      var data = JSON.parse(e.data);
+      if (data.done && data.retrieve_time !== undefined) {
+        retrieveTime = data.retrieve_time;
+        return;
+      }
+      if (data.text) {
+        fullText += data.text;
+        textDiv.textContent = fullText;
+        chat.scrollTop = chat.scrollHeight;
+      }
+    } catch(err) {
+      fullText += e.data;
+      textDiv.textContent = fullText;
+      chat.scrollTop = chat.scrollHeight;
+    }
+  };
+  evtSource.onerror = function() {
+    evtSource.close();
+    if (!fullText) {
+      textDiv.textContent = tr().requestFail;
+    }
+  };
+}
+
+function copyText(btn) {
+  var bubble = btn.closest('.msg-bubble');
+  var text = bubble.querySelector('div').textContent;
+  navigator.clipboard.writeText(text);
+  var t = tr();
+  btn.textContent = t.copied;
+  setTimeout(function() { btn.textContent = t.copy; }, 1500);
+}
+
+function speakText(btn) {
+  var bubble = btn.closest('.msg-bubble');
+  var text = bubble.querySelector('div').textContent;
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    return;
+  }
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
+  u.rate = 1;
+  window.speechSynthesis.speak(u);
+}
+
+function send() {
+  var input = $('input');
+  var q = input.value.trim();
+  if (!q && !uploadedImage) return;
+  input.value = '';
+
+  addMsg(q || tr().recognizeImage, true, uploadedImage);
+
+  if (uploadedImage) {
+    var bubble = addMsgToDOM('', false, '');
+    var textDiv = bubble.querySelector('div');
+    textDiv.textContent = '...';
+    fetch('/api/query-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q, image: uploadedImage, chat_id: currentChatId || 'default' })
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      var answer = data.answer || data.error || tr().requestFail;
+      textDiv.textContent = answer;
+      addMessageToHistory(answer, false, '');
+      var actions = document.createElement('div');
+      actions.className = 'msg-actions';
+      var t = tr();
+      actions.innerHTML = '<button onclick="copyText(this)">' + t.copy + '</button><button onclick="speakText(this)">' + t.read + '</button>';
+      bubble.appendChild(actions);
+    }).catch(function(e) {
+      textDiv.textContent = tr().requestFail + ': ' + e.message;
+    });
+    removeImage();
+  } else {
+    sendStream(q);
+  }
+}
+
+function handleImage(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    uploadedImage = ev.target.result.split(',')[1];
+    $('previewImg').src = ev.target.result;
+    $('imageBar').classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImage() {
+  uploadedImage = '';
+  $('imageBar').classList.remove('show');
+  $('fileInput').value = '';
+}
+
+function toggleVoice() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    alert(tr().micNotSupported);
+    return;
+  }
+  if (recognizing) {
+    recognition.stop();
+    return;
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = lang === 'zh' ? 'zh-CN' : 'en-US';
+  recognition.interimResults = false;
+  recognition.onresult = function(e) {
+    $('input').value = e.results[0][0].transcript;
+    recognizing = false;
+    $('voiceBtn').classList.remove('recording');
+  };
+  recognition.onend = function() {
+    recognizing = false;
+    $('voiceBtn').classList.remove('recording');
+  };
+  recognition.onerror = function(e) {
+    console.log('[VOICE] error:', e.error);
+    recognizing = false;
+    $('voiceBtn').classList.remove('recording');
+    var msg = tr().micNetwork;
+    if (e.error === 'not-allowed') msg = tr().micDenied;
+    else if (e.error === 'network') msg = tr().micNetwork;
+    else if (e.error === 'service-not-allowed') msg = tr().micServiceDenied;
+    alert(msg);
+  };
+  recognition.start();
+  recognizing = true;
+  $('voiceBtn').classList.add('recording');
+}
+
+function renameChat(id) {
+  var h = getHistory();
+  var c = h.find(function(x) { return x.id === id; });
+  if (!c) return;
+  var name = prompt(tr().renamePrompt, c.title || tr().defaultChat);
+  if (name === null) return;
+  name = name.trim();
+  if (!name) return;
+  c.title = name;
+  c.renamed = true;
+  c.time = Date.now();
+  saveHistory(h);
+  renderHistory();
+}
+
+function deleteChat(id) {
+  var h = getHistory();
+  var c = h.find(function(x) { return x.id === id; });
+  if (!c) return;
+  if (!confirm(tr().deleteConfirm)) return;
+  h = h.filter(function(x) { return x.id !== id; });
+  saveHistory(h);
+  if (currentChatId === id) {
+    currentChatId = null;
+    $('chat').innerHTML = '';
+    showWelcome();
+  }
+  renderHistory();
+}
+
+function clearChat() {
+  var h = getHistory();
+  if (h.length && !confirm(tr().clearConfirm)) return;
+  localStorage.removeItem('rag_history');
+  currentChatId = null;
+  $('chat').innerHTML = '';
+  showWelcome();
+  renderHistory();
+}
+
+function renderSuggestions(items) {
+  var c = $('suggestions');
+  if (!c) return;
+  c.innerHTML = '';
+  items.forEach(function(s) {
+    var chip = document.createElement('div');
+    chip.className = 'suggestion-chip';
+    chip.textContent = s;
+    chip.onclick = function() {
+      $('input').value = s;
+      send();
+    };
+    c.appendChild(chip);
+  });
+}
+
+function loadSuggestions() {
+  var fallback = tr().suggestions || [];
+  fetch('/api/suggestions?lang=' + encodeURIComponent(lang)).then(function(r) {
+    return r.json();
+  }).then(function(data) {
+    renderSuggestions((data.suggestions && data.suggestions.length) ? data.suggestions : fallback);
+  }).catch(function() {
+    renderSuggestions(fallback);
+  });
+}
+
+applyTheme();
+applyLang();
+renderHistory();
+showWelcome();
+</script>
+</body>
+</html>

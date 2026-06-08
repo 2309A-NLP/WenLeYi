@@ -1,0 +1,20 @@
+{
+  "rag_metrics": {
+    "faithfulness": 0.4097090621452725,
+    "answer_relevancy": 0.8440914049520608,
+    "context_precision": 0.7198927938975082,
+    "context_recall": 0.5470089257844218
+  },
+  "lightrag_metrics": {
+    "faithfulness": 0.3528969563298128,
+    "answer_relevancy": 0.8221813226142342,
+    "context_precision": 0.5962865464324335,
+    "context_recall": 0.3528969563298128
+  },
+  "improvement": {
+    "faithfulness": -0.056812105815459646,
+    "answer_relevancy": -0.021910082337826653,
+    "context_precision": -0.12360624746507465,
+    "context_recall": -0.194111969454609
+  }
+}

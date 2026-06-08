@@ -1,0 +1,142 @@
+{
+  "timestamp": "2026-06-08T14:04:31.776623",
+  "config": {
+    "llm_model": "deepseek-v4-flash",
+    "search_mode": "hybrid",
+    "reranker_enabled": true,
+    "neo4j_enabled": false,
+    "top_k": 8,
+    "rerank_top_k": 3,
+    "faiss_top_k": 5,
+    "bm25_top_k": 5
+  },
+  "questions": [
+    {
+      "question": "公司的组织架构是什么？",
+      "total_seconds": 8.483,
+      "rounds": [
+        {
+          "question": "公司的组织架构是什么？",
+          "total": 8.483,
+          "answer_length": 478
+        }
+      ],
+      "answer_length": 478
+    },
+    {
+      "question": "销售部有哪些部门？",
+      "total_seconds": 7.33,
+      "rounds": [
+        {
+          "question": "销售部有哪些部门？",
+          "total": 7.33,
+          "answer_length": 530
+        }
+      ],
+      "answer_length": 530
+    },
+    {
+      "question": "大客户销售部由哪些销售处构成？",
+      "total_seconds": 2.826,
+      "rounds": [
+        {
+          "question": "大客户销售部由哪些销售处构成？",
+          "total": 2.826,
+          "answer_length": 131
+        }
+      ],
+      "answer_length": 131
+    },
+    {
+      "question": "公司的主要业务有哪些？",
+      "total_seconds": 9.558,
+      "rounds": [
+        {
+          "question": "公司的主要业务有哪些？",
+          "total": 9.558,
+          "answer_length": 518
+        }
+      ],
+      "answer_length": 518
+    },
+    {
+      "question": "2024年的营业收入是多少？",
+      "total_seconds": 5.831,
+      "rounds": [
+        {
+          "question": "2024年的营业收入是多少？",
+          "total": 5.831,
+          "answer_length": 220
+        }
+      ],
+      "answer_length": 220
+    },
+    {
+      "question": "公司的核心竞争力是什么？",
+      "total_seconds": 9.24,
+      "rounds": [
+        {
+          "question": "公司的核心竞争力是什么？",
+          "total": 9.24,
+          "answer_length": 542
+        }
+      ],
+      "answer_length": 542
+    },
+    {
+      "question": "公司的风险管理措施有哪些？",
+      "total_seconds": 9.799,
+      "rounds": [
+        {
+          "question": "公司的风险管理措施有哪些？",
+          "total": 9.799,
+          "answer_length": 620
+        }
+      ],
+      "answer_length": 620
+    },
+    {
+      "question": "公司的研发投入情况如何？",
+      "total_seconds": 8.238,
+      "rounds": [
+        {
+          "question": "公司的研发投入情况如何？",
+          "total": 8.238,
+          "answer_length": 697
+        }
+      ],
+      "answer_length": 697
+    },
+    {
+      "question": "公司的客户群体主要有哪些？",
+      "total_seconds": 9.365,
+      "rounds": [
+        {
+          "question": "公司的客户群体主要有哪些？",
+          "total": 9.365,
+          "answer_length": 382
+        }
+      ],
+      "answer_length": 382
+    },
+    {
+      "question": "公司的未来发展战略是什么？",
+      "total_seconds": 10.097,
+      "rounds": [
+        {
+          "question": "公司的未来发展战略是什么？",
+          "total": 10.097,
+          "answer_length": 382
+        }
+      ],
+      "answer_length": 382
+    }
+  ],
+  "overall": {
+    "avg_seconds": 8.077,
+    "min_seconds": 2.826,
+    "max_seconds": 10.097,
+    "pass_rate": "1/10",
+    "target_seconds": 3
+  }
+}

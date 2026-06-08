@@ -1,0 +1,285 @@
+{
+  "timestamp": "2026-06-08T17:05:06.615568",
+  "config": {
+    "llm_model": "deepseek-v4-flash",
+    "search_mode": "hybrid",
+    "reranker_enabled": true,
+    "neo4j_enabled": false,
+    "top_k": 8,
+    "rerank_top_k": 3,
+    "faiss_top_k": 5,
+    "bm25_top_k": 5
+  },
+  "questions": [
+    {
+      "question": "公司的组织架构是什么？",
+      "total_seconds": 6.212,
+      "retrieve_seconds": 0.178,
+      "rounds": [
+        {
+          "question": "公司的组织架构是什么？",
+          "total": 5.68,
+          "retrieve_time": 0.2,
+          "answer_length": 123
+        },
+        {
+          "question": "公司的组织架构是什么？",
+          "total": 6.279,
+          "retrieve_time": 0.182,
+          "answer_length": 104
+        },
+        {
+          "question": "公司的组织架构是什么？",
+          "total": 6.676,
+          "retrieve_time": 0.152,
+          "answer_length": 45
+        }
+      ],
+      "answer_length": 45
+    },
+    {
+      "question": "销售部有哪些部门？",
+      "total_seconds": 5.107,
+      "retrieve_seconds": 0.143,
+      "rounds": [
+        {
+          "question": "销售部有哪些部门？",
+          "total": 4.922,
+          "retrieve_time": 0.141,
+          "answer_length": 45
+        },
+        {
+          "question": "销售部有哪些部门？",
+          "total": 5.114,
+          "retrieve_time": 0.138,
+          "answer_length": 36
+        },
+        {
+          "question": "销售部有哪些部门？",
+          "total": 5.285,
+          "retrieve_time": 0.151,
+          "answer_length": 45
+        }
+      ],
+      "answer_length": 45
+    },
+    {
+      "question": "大客户销售部由哪些销售处构成？",
+      "total_seconds": 3.683,
+      "retrieve_seconds": 0.197,
+      "rounds": [
+        {
+          "question": "大客户销售部由哪些销售处构成？",
+          "total": 4.99,
+          "retrieve_time": 0.192,
+          "answer_length": 131
+        },
+        {
+          "question": "大客户销售部由哪些销售处构成？",
+          "total": 2.865,
+          "retrieve_time": 0.198,
+          "answer_length": 131
+        },
+        {
+          "question": "大客户销售部由哪些销售处构成？",
+          "total": 3.194,
+          "retrieve_time": 0.2,
+          "answer_length": 131
+        }
+      ],
+      "answer_length": 131
+    },
+    {
+      "question": "公司的主要业务有哪些？",
+      "total_seconds": 5.909,
+      "retrieve_seconds": 0.163,
+      "rounds": [
+        {
+          "question": "公司的主要业务有哪些？",
+          "total": 5.649,
+          "retrieve_time": 0.192,
+          "answer_length": 98
+        },
+        {
+          "question": "公司的主要业务有哪些？",
+          "total": 6.355,
+          "retrieve_time": 0.146,
+          "answer_length": 148
+        },
+        {
+          "question": "公司的主要业务有哪些？",
+          "total": 5.722,
+          "retrieve_time": 0.151,
+          "answer_length": 155
+        }
+      ],
+      "answer_length": 155
+    },
+    {
+      "question": "2024年的营业收入是多少？",
+      "total_seconds": 4.735,
+      "retrieve_seconds": 0.178,
+      "rounds": [
+        {
+          "question": "2024年的营业收入是多少？",
+          "total": 4.655,
+          "retrieve_time": 0.173,
+          "answer_length": 31
+        },
+        {
+          "question": "2024年的营业收入是多少？",
+          "total": 4.451,
+          "retrieve_time": 0.166,
+          "answer_length": 24
+        },
+        {
+          "question": "2024年的营业收入是多少？",
+          "total": 5.098,
+          "retrieve_time": 0.195,
+          "answer_length": 132
+        }
+      ],
+      "answer_length": 132
+    },
+    {
+      "question": "公司的核心竞争力是什么？",
+      "total_seconds": 5.309,
+      "retrieve_seconds": 0.149,
+      "rounds": [
+        {
+          "question": "公司的核心竞争力是什么？",
+          "total": 6.06,
+          "retrieve_time": 0.142,
+          "answer_length": 112
+        },
+        {
+          "question": "公司的核心竞争力是什么？",
+          "total": 4.726,
+          "retrieve_time": 0.145,
+          "answer_length": 27
+        },
+        {
+          "question": "公司的核心竞争力是什么？",
+          "total": 5.14,
+          "retrieve_time": 0.159,
+          "answer_length": 30
+        }
+      ],
+      "answer_length": 30
+    },
+    {
+      "question": "公司的风险管理措施有哪些？",
+      "total_seconds": 5.429,
+      "retrieve_seconds": 0.189,
+      "rounds": [
+        {
+          "question": "公司的风险管理措施有哪些？",
+          "total": 5.927,
+          "retrieve_time": 0.162,
+          "answer_length": 100
+        },
+        {
+          "question": "公司的风险管理措施有哪些？",
+          "total": 5.107,
+          "retrieve_time": 0.232,
+          "answer_length": 22
+        },
+        {
+          "question": "公司的风险管理措施有哪些？",
+          "total": 5.252,
+          "retrieve_time": 0.172,
+          "answer_length": 114
+        }
+      ],
+      "answer_length": 114
+    },
+    {
+      "question": "公司的研发投入情况如何？",
+      "total_seconds": 6.19,
+      "retrieve_seconds": 0.161,
+      "rounds": [
+        {
+          "question": "公司的研发投入情况如何？",
+          "total": 6.247,
+          "retrieve_time": 0.169,
+          "answer_length": 2
+        },
+        {
+          "question": "公司的研发投入情况如何？",
+          "total": 6.385,
+          "retrieve_time": 0.176,
+          "answer_length": 0
+        },
+        {
+          "question": "公司的研发投入情况如何？",
+          "total": 5.938,
+          "retrieve_time": 0.139,
+          "answer_length": 0
+        }
+      ],
+      "answer_length": 0
+    },
+    {
+      "question": "公司的客户群体主要有哪些？",
+      "total_seconds": 6.893,
+      "retrieve_seconds": 0.192,
+      "rounds": [
+        {
+          "question": "公司的客户群体主要有哪些？",
+          "total": 6.809,
+          "retrieve_time": 0.277,
+          "answer_length": 156
+        },
+        {
+          "question": "公司的客户群体主要有哪些？",
+          "total": 7.055,
+          "retrieve_time": 0.148,
+          "answer_length": 26
+        },
+        {
+          "question": "公司的客户群体主要有哪些？",
+          "total": 6.815,
+          "retrieve_time": 0.151,
+          "answer_length": 0
+        }
+      ],
+      "answer_length": 0
+    },
+    {
+      "question": "公司的未来发展战略是什么？",
+      "total_seconds": 6.692,
+      "retrieve_seconds": 0.165,
+      "rounds": [
+        {
+          "question": "公司的未来发展战略是什么？",
+          "total": 6.429,
+          "retrieve_time": 0.162,
+          "answer_length": 145
+        },
+        {
+          "question": "公司的未来发展战略是什么？",
+          "total": 6.735,
+          "retrieve_time": 0.151,
+          "answer_length": 110
+        },
+        {
+          "question": "公司的未来发展战略是什么？",
+          "total": 6.911,
+          "retrieve_time": 0.181,
+          "answer_length": 108
+        }
+      ],
+      "answer_length": 108
+    }
+  ],
+  "overall": {
+    "avg_seconds": 5.616,
+    "min_seconds": 3.683,
+    "max_seconds": 6.893,
+    "avg_retrieve": 0.171,
+    "min_retrieve": 0.143,
+    "max_retrieve": 0.197,
+    "pass_rate": "10/10",
+    "target_seconds": 1
+  }
+}
