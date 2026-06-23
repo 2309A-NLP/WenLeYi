@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文生图智能体</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; overflow: hidden; }
+        .container { max-width: 1200px; margin: 0 auto; height: calc(100vh - 40px); }
+        header { text-align: center; color: white; margin-bottom: 20px; }
+        header h1 { font-size: 2.5em; }
+        main { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: calc(100% - 80px); }
+        .section { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .section-left { position: sticky; top: 20px; align-self: start; }
+        .section-right { max-height: calc(100vh - 40px); overflow-y: auto; }
+        h2 { color: #333; margin-bottom: 15px; }
+        .upload-box { border: 2px dashed #ddd; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 20px; min-height: 120px; position: relative; cursor: pointer; }
+        .upload-box:hover { border-color: #667eea; }
+        .preview-img { max-width: 100%; max-height: 180px; border-radius: 10px; display: none; }
+        .delete-btn { background: #ff4444; color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; display: none; }
+        .delete-btn:hover { background: #cc0000; }
+        textarea { width: 100%; height: 100px; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 15px; }
+        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; flex: 1; color: white; font-size: 14px; }
+        .btn-right { background: #ff6b6b; }
+        .btn-front { background: #4ecdc4; }
+        .btn-left { background: #45b7d1; }
+        .btn-gen { width: 100%; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 12px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; }
+        .result { min-height: 250px; border: 2px dashed #ddd; border-radius: 10px; padding: 20px; text-align: center; }
+        .loading { color: #667eea; font-weight: bold; }
+        .success { color: #4ecdc4; }
+        .error { color: #ff6b6b; }
+        .desc { background: #f8f9ff; padding: 15px; border-radius: 8px; margin: 10px 0; text-align: left; line-height: 1.6; }
+        .download-btn { display: inline-block; margin-top: 8px; padding: 6px 16px; background: #4ecdc4; color: white; border-radius: 6px; text-decoration: none; font-size: 13px; }
+        .download-btn:hover { background: #3dbdb4; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header><h1>文生图智能体</h1><p>人工智能NLP-Agent 数字人项目</p></header>
+    <main>
+        <div class="section section-left">
+            <h2>上传参考图</h2>
+            <div class="upload-box" id="uploadBox">
+                <input type="file" id="fileInput" accept="image/*" style="display:none">
+                <p id="placeholder">点击或拖拽上传参考图片</p>
+                <img id="preview" class="preview-img">
+            </div>
+            <button class="delete-btn" id="deleteBtn" style="display:none;">删除图片</button>
+            <h2>输入生成要求</h2>
+            <textarea id="prompt" placeholder="请描述你想要生成的图像"></textarea>
+            <div class="btn-group">
+                <button class="btn btn-right" onclick="setPrompt('right')">右转30°</button>
+                <button class="btn btn-front" onclick="setPrompt('front')">正面</button>
+                <button class="btn btn-left" onclick="setPrompt('left')">左转30°</button>
+            </div>
+            <button class="btn-gen" onclick="generate()">生成图片</button>
+            <button class="btn-gen" style="margin-top:10px;background:linear-gradient(135deg,#f093fb,#f5576c);" onclick="generateAll()">一键生成三张（左+正+右）</button>
+        </div>
+        <div class="section section-right">
+            <h2>生成结果</h2>
+            <div class="result" id="result"><p style="color:#999">上传参考图并输入要求，点击生成按钮</p></div>
+        </div>
+    </main>
+</div>
+<script>
+let imgData = null;
+let currentType = "front";  // 记录当前选择的方向类型
+const box = document.getElementById("uploadBox");
+const input = document.getElementById("fileInput");
+const preview = document.getElementById("preview");
+const delBtn = document.getElementById("deleteBtn");
+const placeholder = document.getElementById("placeholder");
+
+box.onclick = function(e) {
+    if (e.target === delBtn) return;  // 如果点击的是删除按钮，不触发上传
+    input.click();
+};
+
+// 拖拽上传功能
+box.ondragover = function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    box.style.borderColor = "#667eea";
+    box.style.background = "#f0f3ff";
+};
+box.ondragleave = function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    box.style.borderColor = "#ddd";
+    box.style.background = "";
+};
+box.ondrop = function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    box.style.borderColor = "#ddd";
+    box.style.background = "";
+    let files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].type.startsWith("image/")) {
+        let reader = new FileReader();
+        reader.onload = function(ev) {
+            imgData = ev.target.result;
+            preview.src = imgData;
+            preview.style.display = "block";
+            delBtn.style.display = "inline-block";
+            placeholder.style.display = "none";
+        };
+        reader.readAsDataURL(files[0]);
+    }
+};
+
+input.onchange = function(e) {
+    let file = e.target.files[0];
+    if (file) {
+        let reader = new FileReader();
+        reader.onload = function(ev) {
+            imgData = ev.target.result;
+            preview.src = imgData;
+            preview.style.display = "block";
+            delBtn.style.display = "inline-block";
+            placeholder.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+delBtn.onclick = function(e) {
+    e.stopPropagation();  // 防止事件冒泡到上传框
+    imgData = null;
+    preview.style.display = "none";
+    delBtn.style.display = "none";
+    placeholder.style.display = "block";
+    input.value = "";
+    input.type = "";      // 清空文件输入
+    input.type = "file";  // 重新设置类型以确保可以再次选择文件
+    console.log("图片已删除");
+};
+
+const prompts = {
+    right: "将图片中人物面部向右旋转约30度，呈现左侧四分之三视角，脸部朝向画面右侧，视线向右前方。严格要求：1）100%保留原图人物所有五官形状、大小、比例，眼睛颜色、瞳孔大小、眉毛形状完全一致；2）肤色、肤质、面部纹理与原图保持一致；3）面部轮廓自然流畅，下颌线、颧骨、鼻梁线条不发生变形；4）光照方向自然，面部明暗过渡平滑，无明显拼接痕迹；5）图像清晰锐利，无像素化、模糊或失真；6）背景与面部自然融合，扩图区域颜色、光影与原图一致",
+    front: "将图片中人物调整为标准正面朝向，双眼正视镜头，面部完全对称。严格要求：1）100%保留原图人物所有五官形状、大小、比例，眼睛颜色、瞳孔大小、眉毛形状完全一致；2）肤色、肤质、面部纹理与原图保持一致；3）面部轮廓自然流畅，左右脸对称协调，无变形；4）光照均匀自然，面部明暗过渡平滑，无明显拼接痕迹；5）图像清晰锐利，无像素化、模糊或失真；6）背景与面部自然融合，扩图区域颜色、光影与原图一致",
+    left: "将图片中人物面部向左旋转约30度，呈现右侧四分之三视角，脸部朝向画面左侧，视线向左前方。严格要求：1）100%保留原图人物所有五官形状、大小、比例，眼睛颜色、瞳孔大小、眉毛形状完全一致；2）肤色、肤质、面部纹理与原图保持一致；3）面部轮廓自然流畅，下颌线、颧骨、鼻梁线条不发生变形；4）光照方向自然，面部明暗过渡平滑，无明显拼接痕迹；5）图像清晰锐利，无像素化、模糊或失真；6）背景与面部自然融合，扩图区域颜色、光影与原图一致"
+};
+
+function setPrompt(type) {
+    currentType = type;  // 记住用户选的方向
+    document.getElementById("prompt").value = prompts[type];
+}
+
+function generate() {
+    let p = document.getElementById("prompt").value;
+    if (!p.trim()) { alert("请输入要求"); return; }
+    if (!imgData) { alert("请先上传参考图片"); return; }
+    let t = currentType;
+    document.getElementById("result").innerHTML = '<p class="loading">生成中，请稍候...</p>';
+    fetch("/generate", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({prompt: p, type: t, reference_image: imgData})
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            let html = '<p class="success">生成成功!</p>';
+            if (d.image_url) {
+                html += '<img src="' + d.image_url + '" style="max-width:100%;border-radius:10px;margin-top:10px;">';
+                html += '<br><a href="' + d.image_url + '" download="result_' + t + '.png" class="download-btn">下载图片</a>';
+            }
+            html += '<div class="desc">' + d.message + '</div>';
+            document.getElementById("result").innerHTML = html;
+        } else {
+            document.getElementById("result").innerHTML = '<p class="error">' + d.error + '</p>';
+        }
+    }).catch(e => {
+        document.getElementById("result").innerHTML = '<p class="error">失败: ' + e.message + '</p>';
+    });
+}
+
+function generateAll() {
+    if (!imgData) { alert("请先上传参考图片"); return; }
+    document.getElementById("result").innerHTML = '<p class="loading">正在一键生成三张图片（左+正+右），请耐心等待...</p>';
+    fetch("/generate_all", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({reference_image: imgData})
+    }).then(r => r.json()).then(d => {
+        if (d.success) {
+            let html = '<p class="success">三张图片生成完成！</p>';
+            let labels = {left: "左转30°", front: "正面", right: "右转30°"};
+            for (let key of ["left", "front", "right"]) {
+                let r = d.results[key];
+                html += '<div style="margin:15px 0;padding:10px;border:1px solid #eee;border-radius:10px;">';
+                html += '<p style="font-weight:bold;color:#333;">' + labels[key] + '</p>';
+                if (r && r.success && r.image_url) {
+                    html += '<img src="' + r.image_url + '" style="max-width:100%;border-radius:10px;margin-top:5px;">';
+                    html += '<br><a href="' + r.image_url + '" download="result_' + key + '.png" class="download-btn">下载图片</a>';
+                } else {
+                    html += '<p class="error">' + (r ? r.error : "生成失败") + '</p>';
+                }
+                html += '</div>';
+            }
+            document.getElementById("result").innerHTML = html;
+        } else {
+            document.getElementById("result").innerHTML = '<p class="error">' + d.error + '</p>';
+        }
+    }).catch(e => {
+        document.getElementById("result").innerHTML = '<p class="error">失败: ' + e.message + '</p>';
+    });
+}
+</script>
+</body>
+</html>
