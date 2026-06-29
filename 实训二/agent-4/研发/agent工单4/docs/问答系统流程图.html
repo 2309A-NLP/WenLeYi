@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>问答系统检索流程图</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; font-family: 'Microsoft YaHei', sans-serif; }
+        h1 { text-align: center; color: #00d4ff; margin-bottom: 30px; }
+        .flow-container { max-width: 800px; margin: 0 auto; }
+        .step { 
+            background: #16213e; 
+            border-left: 4px solid #00d4ff; 
+            padding: 15px 20px; 
+            margin-bottom: 15px; 
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+        .step-num { 
+            position: absolute; 
+            left: -20px; 
+            top: 50%; 
+            transform: translateY(-50%);
+            background: #00d4ff; 
+            color: #1a1a2e; 
+            width: 30px; 
+            height: 30px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .step-title { color: #00d4ff; font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        .step-desc { color: #ccc; font-size: 14px; line-height: 1.6; }
+        .step-code { 
+            background: #0a1628; 
+            padding: 8px 12px; 
+            border-radius: 4px; 
+            font-family: monospace; 
+            font-size: 12px; 
+            color: #4ade80; 
+            margin-top: 8px;
+            white-space: pre-wrap;
+        }
+        .arrow { 
+            text-align: center; 
+            color: #00d4ff; 
+            font-size: 24px; 
+            margin: 5px 0;
+        }
+        .highlight { background: #1e3a5f; border-left-color: #ffd700; }
+        .highlight .step-num { background: #ffd700; }
+        .note { 
+            background: #0f3460; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-top: 20px;
+            font-size: 13px;
+            color: #888;
+        }
+        .note strong { color: #00d4ff; }
+    </style>
+</head>
+<body>
+    <h1>基金数据问答系统 - 检索流程图</h1>
+    
+    <div class="flow-container">
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-title">用户输入问题</div>
+            <div class="step-desc">用户在网页/命令行输入自然语言问题</div>
+            <div class="step-code">例如: "基金000006的名称是什么"</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-title">问题分类</div>
+            <div class="step-desc">判断问题是简单查询还是复杂查询，决定用哪个模型</div>
+            <div class="step-code">简单: "基金000006的名称是什么" → DeepSeek
+复杂: "2021年涨跌幅最大的股票" → DeepSeek</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-title">构建Prompt</div>
+            <div class="step-desc">把数据库表结构 + 用户问题 组合成提示词发给LLM</div>
+            <div class="step-code">System Prompt:
+"你是基金数据SQL专家。数据库有10张表..."
+[数据库Schema + 关联关系 + 规则]
+
+User Prompt:
+"问题: 基金000006的名称是什么?
+SQL:"</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step highlight">
+            <div class="step-num">4</div>
+            <div class="step-title">LLM生成SQL（DeepSeek API）</div>
+            <div class="step-desc">DeepSeek理解问题后，生成对应的SQL查询语句</div>
+            <div class="step-code">输入: "基金000006的名称是什么"
+输出: SELECT 基金简称 FROM 基金基本信息 
+      WHERE 基金代码='000006'</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step highlight">
+            <div class="step-num">5</div>
+            <div class="step-title">执行SQL查询（SQLite数据库）</div>
+            <div class="step-desc">在本地SQLite数据库上执行SQL，获取结果（30秒超时）</div>
+            <div class="step-code">数据库: 博金杯比赛数据.db
+执行: SELECT 基金简称 FROM 基金基本信息 
+      WHERE 基金代码='000006'
+结果: [('西部利得量化成长混合A',)]</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-title">格式化答案</div>
+            <div class="step-desc">把查询结果格式化为用户可读的答案</div>
+            <div class="step-code">单条结果: 直接显示
+多条结果: 分点编号显示
+1. 基金A | 数量: 100万
+2. 基金B | 数量: 80万</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <div class="step-num">7</div>
+            <div class="step-title">返回答案给用户</div>
+            <div class="step-desc">在网页上显示最终答案</div>
+            <div class="step-code">答案: 西部利得量化成长混合A</div>
+        </div>
+        
+        <div class="note">
+            <strong>关键点说明：</strong><br><br>
+            <strong>1. LLM的作用：</strong>把自然语言翻译成SQL语句（NL2SQL），不是直接回答问题<br><br>
+            <strong>2. 答案来源：</strong>所有答案都从SQLite数据库查询得到，不是LLM自己生成的<br><br>
+            <strong>3. 失败重试：</strong>如果SQL执行报错，会把错误信息反馈给LLM，让它修正SQL后重试（最多2次）<br><br>
+            <strong>4. 招股书问题：</strong>涉及公司详情、专利、业务模式等问题，数据库里没有，自动跳过<br><br>
+            <strong>5. 索引优化：</strong>数据库加了索引后，大部分查询从十几秒变成零点几秒
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户提问到返回结果完整流程</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; font-family: 'Microsoft YaHei', sans-serif; }
+        h1 { text-align: center; color: #00d4ff; margin-bottom: 30px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .section { background: #16213e; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .step { 
+            background: #0f3460; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 10px 0;
+            border-left: 4px solid #00d4ff;
+        }
+        .step-num { color: #00d4ff; font-weight: bold; }
+        .arrow { text-align: center; color: #00d4ff; font-size: 20px; margin: 5px 0; }
+        .code { 
+            background: #0a1628; 
+            padding: 10px; 
+            border-radius: 4px; 
+            font-family: monospace; 
+            font-size: 12px; 
+            color: #4ade80;
+            white-space: pre-wrap;
+            margin: 8px 0;
+        }
+        .highlight { background: #1e3a5f; border-left-color: #ffd700; }
+        .note { background: #1e3a5f; padding: 12px; border-radius: 4px; margin: 10px 0; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #0f3460; padding: 8px; text-align: left; }
+        th { background: #0f3460; color: #00d4ff; }
+    </style>
+</head>
+<body>
+    <h1>用户提问到返回结果 - 完整流程</h1>
+    
+    <div class="container">
+        
+        <h2>一、整体流程图</h2>
+        
+        <div class="section">
+            <div class="code">
+用户在网页输入问题
+        ↓
+Flask接收HTTP请求
+        ↓
+判断问题类型
+    ┌─────┴─────┐
+    ↓           ↓
+数据库问题    招股书问题
+    ↓           ↓
+构建Prompt    搜索PDF文件
+    ↓           ↓
+调用DeepSeek  提取相关内容
+    ↓           ↓
+生成SQL       调用DeepSeek
+    ↓           ↓
+执行SQL       生成答案
+    ↓           ↓
+格式化答案    格式化答案
+    ↓           ↓
+    └─────┬─────┘
+          ↓
+返回JSON给前端
+          ↓
+网页显示答案</div>
+        </div>
+        
+        <h2>二、详细步骤分解</h2>
+        
+        <div class="step">
+            <span class="step-num">步骤1：用户输入问题</span>
+            <p>用户在网页界面输入自然语言问题，点击"查询"按钮</p>
+            <div class="code">用户输入: "20210331持有贵州茅台最多的基金是哪个"
+点击按钮 → 触发JavaScript函数 askQuestion()</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <span class="step-num">步骤2：前端发送请求</span>
+            <p>JavaScript将问题通过HTTP POST发送到后端API</p>
+            <div class="code">fetch('/api/ask', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({question: '20210331持有贵州茅台最多的基金是哪个'})
+})</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <span class="step-num">步骤3：Flask接收请求</span>
+            <p>web.py中的路由函数接收问题，调用ask()函数</p>
+            <div class="code">@app.route('/api/ask', methods=['POST'])
+def api_ask():
+    data = request.get_json()
+    question = data.get('question', '')
+    result = ask(question)  # 核心处理函数
+    return jsonify(result)</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step highlight">
+            <span class="step-num">步骤4：问题分类</span>
+            <p>系统判断问题类型，决定走哪条处理路径</p>
+            <div class="code">from prompt_builder import is_prospectus_question
+
+if is_prospectus_question(question):
+    # 招股书问题 → PDF解析流程
+else:
+    # 数据库问题 → NL2SQL流程</div>
+            <div class="note">
+                <strong>判断依据：</strong>检查问题是否包含"招股"、"法定代表人"、"发起人"等关键词
+            </div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <h2>三、数据库问题处理流程（NL2SQL）</h2>
+        
+        <div class="step">
+            <span class="step-num">步骤5a：构建Prompt</span>
+            <p>将数据库Schema、规则、示例组合成完整的System Prompt</p>
+            <div class="code">System Prompt 内容:
+┌─────────────────────────────────────┐
+│ 1. 角色定义: 你是基金数据SQL专家    │
+│ 2. 数据库Schema: 10张表的字段信息   │
+│ 3. 表关联关系: 基金代码、股票代码    │
+│ 4. 重要规则: 字段名必须匹配         │
+│ 5. 9个示例: 各类问题的SQL写法       │
+└─────────────────────────────────────┘
+
+User Prompt:
+问题: 20210331持有贵州茅台最多的基金是哪个?
+SQL:</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <span class="step-num">步骤6a：调用DeepSeek API</span>
+            <p>将Prompt发送给DeepSeek，获取生成的SQL</p>
+            <div class="code">请求: POST https://api.deepseek.com/chat/completions
+{
+    "model": "deepseek-chat",
+    "messages": [
+        {"role": "system", "content": "System Prompt..."},
+        {"role": "user", "content": "问题: 20210331持有贵州茅台最多的基金是哪个?\n\nSQL:"}
+    ],
+    "temperature": 0.1
+}
+
+响应: SELECT 基金简称,数量 FROM 基金股票持仓明细 
+      WHERE 股票名称='贵州茅台' AND 持仓日期='20210331' 
+      ORDER BY 数量 DESC LIMIT 1</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <span class="step-num">步骤7a：执行SQL查询</span>
+            <p>在SQLite数据库上执行SQL（30秒超时）</p>
+            <div class="code">数据库: 博金杯比赛数据.db (1.46GB)
+执行: SELECT 基金简称,数量 FROM 基金股票持仓明细 
+      WHERE 股票名称='贵州茅台' AND 持仓日期='20210331' 
+      ORDER BY 数量 DESC LIMIT 1
+
+结果: [('鹏华匠心精选混合C', 1062620)]</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <span class="step-num">步骤8a：格式化答案</span>
+            <p>将查询结果格式化为用户可读的答案</p>
+            <div class="code">格式化规则:
+- 单行单列: 直接返回值
+- 单行多列: 字段名:值 格式
+- 多行: 分点编号显示
+- 自动去重
+- 数值精度处理
+
+结果: 基金简称: 鹏华匠心精选混合C, 数量: 1062620</div>
+        </div>
+        
+        <h2>四、招股书问题处理流程（PDF解析）</h2>
+        
+        <div class="step">
+            <span class="step-num">步骤5b：提取公司名</span>
+            <p>从问题中用正则表达式提取公司名称</p>
+            <div class="code">问题: "华瑞电器股份有限公司的法定代表人是谁"
+正则: ([\u4e00-\u9fa5]{2,20}(?:有限公司|股份有限公司))
+提取: 华瑞电器股份有限公司</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <span class="step-num">步骤6b：查找PDF文件</span>
+            <p>在80个txt文件中搜索对应的公司</p>
+            <div class="code">搜索方式:
+1. 精确匹配公司名 → 未找到
+2. 模糊匹配（包含关系）→ 未找到
+3. grep搜索文件内容 → 找到 3e0ded8a...txt</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <span class="step-num">步骤7b：提取相关内容</span>
+            <p>根据问题关键词，在文件中搜索相关段落</p>
+            <div class="code">关键词: ["法定代表人", "代表人", "董事长"]
+搜索: 逐行扫描，找包含关键词的行
+上下文: 前后各3行
+
+结果:
+  公司住所： 宁波市鄞州区姜山镇科技园区
+  成立日期： 1996年2月12日
+  法定代表人： 孙瑞良        ← 找到了！
+  注册资本： 7,500万元</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <span class="step-num">步骤8b：调用DeepSeek生成答案</span>
+            <p>将提取的内容发给DeepSeek，让它生成答案</p>
+            <div class="code">System: 你是金融文档分析专家，根据内容回答问题
+User: 
+  招股书内容: [提取的段落]
+  问题: 华瑞电器股份有限公司的法定代表人是谁
+  答案:
+
+响应: 孙瑞良</div>
+        </div>
+        
+        <h2>五、返回结果</h2>
+        
+        <div class="step highlight">
+            <span class="step-num">步骤9：返回JSON给前端</span>
+            <p>将答案封装成JSON格式返回</p>
+            <div class="code">返回格式:
+{
+    "question": "20210331持有贵州茅台最多的基金是哪个",
+    "answer": "基金简称: 鹏华匠心精选混合C, 数量: 1062620",
+    "sql": "SELECT 基金简称,数量 FROM 基金股票持仓明细 WHERE...",
+    "error": null
+}</div>
+        </div>
+        
+        <div class="arrow">↓</div>
+        
+        <div class="step">
+            <span class="step-num">步骤10：前端显示答案</span>
+            <p>JavaScript解析JSON，在网页上显示答案</p>
+            <div class="code">chatBox.innerHTML += `
+    <div class="message assistant">
+        <div class="label">系统</div>
+        <div class="content">基金简称: 鹏华匠心精选混合C, 数量: 1062620</div>
+    </div>
+`;
+chatBox.scrollTop = chatBox.scrollHeight;  // 自动滚动</div>
+        </div>
+        
+        <h2>六、关键代码文件对应</h2>
+        
+        <div class="section">
+            <table>
+                <tr>
+                    <th>步骤</th>
+                    <th>代码文件</th>
+                    <th>函数/方法</th>
+                </tr>
+                <tr>
+                    <td>Flask接收请求</td>
+                    <td>web.py</td>
+                    <td>api_ask()</td>
+                </tr>
+                <tr>
+                    <td>问题分类</td>
+                    <td>prompt_builder.py</td>
+                    <td>is_prospectus_question()</td>
+                </tr>
+                <tr>
+                    <td>构建Prompt</td>
+                    <td>prompt_builder.py</td>
+                    <td>build_system_prompt()</td>
+                </tr>
+                <tr>
+                    <td>调用DeepSeek</td>
+                    <td>sql_generator.py</td>
+                    <td>call_llm()</td>
+                </tr>
+                <tr>
+                    <td>提取SQL</td>
+                    <td>sql_generator.py</td>
+                    <td>extract_sql()</td>
+                </tr>
+                <tr>
+                    <td>执行SQL</td>
+                    <td>sql_executor.py</td>
+                    <td>execute_sql()</td>
+                </tr>
+                <tr>
+                    <td>格式化答案</td>
+                    <td>sql_executor.py</td>
+                    <td>format_result()</td>
+                </tr>
+                <tr>
+                    <td>PDF文件搜索</td>
+                    <td>pdf_parser.py</td>
+                    <td>find_company_file()</td>
+                </tr>
+                <tr>
+                    <td>PDF内容提取</td>
+                    <td>pdf_parser.py</td>
+                    <td>extract_relevant_content()</td>
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</body>
+</html>

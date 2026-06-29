@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>招股书数据问答智能体</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Microsoft YaHei", sans-serif; background: #f0f2f5; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 20px 0; text-align: center; }
+        .header h1 { font-size: 24px; margin-bottom: 5px; }
+        .header p { font-size: 14px; opacity: 0.8; }
+        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+        .chat-box { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 20px; min-height: 400px; max-height: 60vh; overflow-y: auto; }
+        .message { margin-bottom: 16px; display: flex; }
+        .message.user { justify-content: flex-end; }
+        .message.bot { justify-content: flex-start; }
+        .bubble { max-width: 75%; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; word-break: break-all; }
+        .message.user .bubble { background: #1a73e8; color: white; border-bottom-right-radius: 4px; }
+        .message.bot .bubble { background: #f1f3f4; color: #333; border-bottom-left-radius: 4px; }
+        .input-area { display: flex; gap: 10px; margin-top: 16px; }
+        .input-area input { flex: 1; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+        .input-area input:focus { border-color: #1a73e8; }
+        .input-area button { padding: 12px 24px; background: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; transition: background 0.2s; }
+        .input-area button:hover { background: #1557b0; }
+        .input-area button:disabled { background: #ccc; cursor: not-allowed; }
+        .loading { text-align: center; color: #999; font-size: 13px; padding: 10px; }
+        .examples { margin-top: 20px; background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 20px; }
+        .examples h3 { font-size: 15px; color: #666; margin-bottom: 12px; }
+        .example-btn { display: block; width: 100%; text-align: left; padding: 10px 14px; margin-bottom: 8px; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer; font-size: 13px; color: #333; transition: all 0.2s; }
+        .example-btn:hover { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>招股书数据问答智能体</h1>
+        <p>基于80份招股书PDF的RAG问答系统</p>
+    </div>
+
+    <div class="container">
+        <div class="chat-box" id="chatBox">
+            <div class="message bot">
+                <div class="bubble">您好！我是招股书数据问答助手，请输入您的问题。</div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="questionInput" placeholder="请输入关于招股书的问题..." onkeypress="if(event.key==='Enter')sendQuestion()">
+            <button id="sendBtn" onclick="sendQuestion()">发送</button>
+        </div>
+
+        <div class="examples">
+            <h3>示例问题（点击即可发送）</h3>
+            <button class="example-btn" onclick="setQuestion('湖南长远锂科股份有限公司变更设立时作为发起人的法人有哪些？')">湖南长远锂科股份有限公司变更设立时作为发起人的法人有哪些？</button>
+            <button class="example-btn" onclick="setQuestion('云南沃森生物技术股份有限公司负责产品研发的是什么部门？')">云南沃森生物技术股份有限公司负责产品研发的是什么部门？</button>
+            <button class="example-btn" onclick="setQuestion('东莞勤上光电股份有限公司实际控制人是谁？持有多少股份？')">东莞勤上光电股份有限公司实际控制人是谁？持有多少股份？</button>
+        </div>
+    </div>
+
+    <script>
+        function setQuestion(q) {
+            document.getElementById('questionInput').value = q;
+            sendQuestion();
+        }
+
+        function sendQuestion() {
+            var input = document.getElementById('questionInput');
+            var question = input.value.trim();
+            if (!question) return;
+
+            // 显示用户问题
+            appendMessage('user', question);
+            input.value = '';
+            document.getElementById('sendBtn').disabled = true;
+
+            // 显示加载提示
+            var loadingId = appendMessage('bot', '正在检索和生成答案...');
+
+            // 调用后端API
+            var controller = new AbortController();
+            var timeoutId = setTimeout(function() { controller.abort(); }, 120000);
+            fetch('/api/query', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({question: question}),
+                signal: controller.signal
+            })
+            .then(function(res) {
+                clearTimeout(timeoutId);
+                return res.json();
+            })
+            .then(function(data) {
+                var text = data.answer || data.error || "未知错误";
+                updateMessage(loadingId, text);
+                document.getElementById('sendBtn').disabled = false;
+            })
+            .catch(function(err) {
+                clearTimeout(timeoutId);
+                updateMessage(loadingId, '请求失败: ' + err.message);
+                document.getElementById('sendBtn').disabled = false;
+            });
+        }
+
+        function appendMessage(role, text) {
+            var chatBox = document.getElementById('chatBox');
+            var div = document.createElement('div');
+            var id = 'msg_' + Date.now();
+            div.className = 'message ' + role;
+            div.id = id;
+            div.innerHTML = '<div class="bubble">' + text.replace(/\n/g, '<br>') + '</div>';
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return id;
+        }
+
+        function updateMessage(id, text) {
+            var el = document.getElementById(id);
+            if (el) el.querySelector('.bubble').innerHTML = text.replace(/\n/g, '<br>');
+            document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+        }
+    </script>
+</body>
+</html>

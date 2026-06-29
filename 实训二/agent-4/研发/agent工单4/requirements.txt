@@ -1,0 +1,7 @@
+# 工单编号：人工智能NLP-Agent数字人项目-基金问答智能体任务
+# Python依赖列表
+
+requests>=2.28.0
+flask>=2.3.0
+flask-cors>=4.0.0
+python-dotenv>=1.0.0

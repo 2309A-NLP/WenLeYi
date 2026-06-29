@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基金数据问答系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Microsoft YaHei', sans-serif; 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 0;
+        }
+        .header h1 {
+            font-size: 28px;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #888;
+            font-size: 14px;
+        }
+        .chat-box {
+            background: #0f3460;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        .message.user {
+            background: #1a5276;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+        .message.assistant {
+            background: #1e3a5f;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+        }
+        .message .label {
+            font-size: 12px;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+        .message .content {
+            font-size: 15px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .message .sql {
+            margin-top: 8px;
+            padding: 8px;
+            background: #0a1628;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #4ade80;
+            white-space: pre-wrap;
+        }
+        .input-box {
+            display: flex;
+            gap: 10px;
+        }
+        .input-box input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #1e3a5f;
+            border-radius: 8px;
+            background: #0f3460;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-box input:focus {
+            border-color: #00d4ff;
+        }
+        .input-box button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            background: #00d4ff;
+            color: #1a1a2e;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .input-box button:hover {
+            background: #00b4d8;
+        }
+        .input-box button:disabled {
+            background: #444;
+            cursor: not-allowed;
+        }
+        .examples {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0f3460;
+            border-radius: 8px;
+        }
+        .examples h3 {
+            color: #00d4ff;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .example-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .example-item {
+            padding: 8px 12px;
+            background: #1e3a5f;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .example-item:hover {
+            background: #1a5276;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>基金数据问答系统</h1>
+            <p>工单编号：人工智能NLP-Agent数字人项目-基金问答智能体任务</p>
+        </div>
+        
+        <div class="chat-box" id="chatBox">
+            <div class="message assistant">
+                <div class="label">系统</div>
+                <div class="content">您好！我是基金数据问答助手。请输入您的问题，我会从数据库中查询并回答。</div>
+            </div>
+        </div>
+        
+        <div class="input-box">
+            <input type="text" id="questionInput" placeholder="请输入问题，例如：基金000006的名称是什么" 
+                   onkeypress="if(event.keyCode===13) askQuestion()">
+            <button id="askBtn" onclick="askQuestion()">查询</button>
+        </div>
+        
+        <div class="examples">
+            <h3>示例问题（点击可直接查询）</h3>
+            <div class="example-list">
+                <div class="example-item" onclick="setQuery('基金000006的名称是什么')">基金000006的名称是什么</div>
+                <div class="example-item" onclick="setQuery('2021年管理费率最高的基金是哪个')">2021年管理费率最高的基金</div>
+                <div class="example-item" onclick="setQuery('20210331持有贵州茅台最多的基金')">持有贵州茅台最多的基金</div>
+                <div class="example-item" onclick="setQuery('景顺长城中短债债券C的前三大持仓债券')">景顺长城中短债持仓</div>
+                <div class="example-item" onclick="setQuery('2021年688338涨停天数')">688338涨停天数</div>
+                <div class="example-item" onclick="setQuery('20210415建筑材料涨幅超5%的股票数量')">行业涨幅统计</div>
+                <div class="example-item" onclick="setQuery('请帮我计算，在20210715，中信行业分类划分的一级行业为消费者服务行业中，涨跌幅最大股票的股票代码是？涨跌幅是多少？百分数保留两位小数。')">消费者服务行业涨跌幅</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>基于DeepSeek API + SQLite | 数据区间：2019-2021年</p>
+        </div>
+    </div>
+
+    <script>
+        function setQuery(text) {
+            document.getElementById('questionInput').value = text;
+            document.getElementById('questionInput').focus();
+        }
+        
+        function askQuestion() {
+            const input = document.getElementById('questionInput');
+            const question = input.value.trim();
+            if (!question) return;
+            
+            const chatBox = document.getElementById('chatBox');
+            const askBtn = document.getElementById('askBtn');
+            
+            // 添加用户消息
+            chatBox.innerHTML += `
+                <div class="message user">
+                    <div class="label">我</div>
+                    <div class="content">${escapeHtml(question)}</div>
+                </div>
+            `;
+            
+            // 延迟滚动确保DOM更新
+            setTimeout(() => {
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 100);
+            
+            // 禁用按钮
+            askBtn.disabled = true;
+            askBtn.textContent = '查询中...';
+            
+            // 发送请求
+            fetch('/api/ask', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({question: question})
+            })
+            .then(res => res.json())
+            .then(data => {
+                let answer = data.answer || '未获取到答案';
+                
+                chatBox.innerHTML += `
+                    <div class="message assistant">
+                        <div class="label">系统</div>
+                        <div class="content">${escapeHtml(answer)}</div>
+                    </div>
+                `;
+                
+                // 延迟滚动确保DOM更新
+                setTimeout(() => {
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }, 100);
+            })
+            .catch(err => {
+                chatBox.innerHTML += `
+                    <div class="message assistant">
+                        <div class="label">系统</div>
+                        <div class="content" style="color: #ff6b6b;">请求失败: ${escapeHtml(err.message)}</div>
+                    </div>
+                `;
+                
+                // 延迟滚动确保DOM更新
+                setTimeout(() => {
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }, 100);
+            })
+            .finally(() => {
+                askBtn.disabled = false;
+                askBtn.textContent = '查询';
+                input.value = '';
+                input.focus();
+                
+                // 最终滚动确保在底部
+                setTimeout(() => {
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }, 200);
+            });
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

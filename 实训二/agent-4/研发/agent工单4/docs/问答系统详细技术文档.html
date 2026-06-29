@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>问答系统详细技术文档</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; font-family: 'Microsoft YaHei', sans-serif; }
+        h1 { text-align: center; color: #00d4ff; margin-bottom: 30px; }
+        h2 { color: #00d4ff; border-bottom: 1px solid #0f3460; padding-bottom: 10px; margin-top: 30px; }
+        h3 { color: #ffd700; margin-top: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .section { background: #16213e; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .code-block { 
+            background: #0a1628; 
+            padding: 15px; 
+            border-radius: 4px; 
+            font-family: monospace; 
+            font-size: 13px; 
+            color: #4ade80; 
+            white-space: pre-wrap;
+            margin: 10px 0;
+        }
+        .highlight { color: #00d4ff; font-weight: bold; }
+        .note { background: #1e3a5f; padding: 15px; border-radius: 4px; margin: 10px 0; }
+        .flow { background: #0f3460; padding: 15px; border-radius: 4px; margin: 10px 0; text-align: center; }
+        .arrow { color: #00d4ff; font-size: 20px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #0f3460; padding: 10px; text-align: left; }
+        th { background: #0f3460; color: #00d4ff; }
+    </style>
+</head>
+<body>
+    <h1>基金数据问答系统 - 详细技术文档</h1>
+    
+    <div class="container">
+        
+        <h2>一、系统架构概述</h2>
+        
+        <div class="section">
+            <p>本系统采用 <span class="highlight">NL2SQL（Natural Language to SQL）</span> 架构，核心思路是：</p>
+            <div class="flow">
+                用户问题 → LLM翻译 → SQL查询 → 数据库返回答案
+            </div>
+            <p><strong>不是RAG系统</strong>，没有文档分块、向量检索、答案拼接等环节。</p>
+            <p><strong>不是关键词检索</strong>，不依赖关键词匹配。</p>
+            <p><strong>核心是LLM理解语义后生成SQL</strong>，由SQL直接查询数据库获取答案。</p>
+        </div>
+        
+        <h2>二、详细流程分解</h2>
+        
+        <h3>步骤1：用户输入问题</h3>
+        <div class="section">
+            <p>用户输入自然语言问题，例如：</p>
+            <div class="code-block">"20210331持有贵州茅台最多的基金是哪个"</div>
+        </div>
+        
+        <h3>步骤2：问题分类</h3>
+        <div class="section">
+            <p>系统通过<span class="highlight">关键词匹配</span>判断问题复杂度：</p>
+            <div class="code-block">
+# 简单问题：直接用DeepSeek
+"基金000006的名称是什么" → 简单
+
+# 复杂问题：也用DeepSeek（暂未区分模型）
+"涨跌幅最大的股票" → 复杂</div>
+            <p>判断依据：问题是否包含"涨跌幅"、"排名"、"合计"、"行业"等关键词</p>
+        </div>
+        
+        <h3>步骤3：构建Prompt（关键步骤）</h3>
+        <div class="section">
+            <p>系统构建一个包含以下内容的Prompt发给DeepSeek：</p>
+            
+            <h4>3.1 数据库Schema（表结构）</h4>
+            <div class="code-block">
+数据库有10张表：
+- 基金基本信息(基金代码,基金简称,管理人,托管人,基金类型,成立日期,管理费率,托管费率)
+- 基金日行情表(基金代码,交易日期,单位净值,复权单位净值,累计单位净值,资产净值)
+- A股票日行情表(股票代码,交易日,"昨收盘(元)","今开盘(元)","最高价(元)","最低价(元)","收盘价(元)","成交量(股)","成交金额(元)")
+- A股公司行业划分表(股票代码,交易日期,行业划分标准,一级行业名称,二级行业名称)
+- 基金股票持仓明细(基金代码,基金简称,持仓日期,股票代码,股票名称,数量,市值,市值占基金资产净值比,第N大重仓股,报告类型)
+... (共10张表)</div>
+            
+            <h4>3.2 表关联关系</h4>
+            <div class="code-block">
+关联: 基金基本信息.基金代码→各基金表
+     基金股票持仓明细.股票代码→A股票日行情表/A股公司行业划分表</div>
+            
+            <h4>3.3 生成规则</h4>
+            <div class="code-block">
+规则:
+1. 只返回SQL，无解释
+2. 日期用YYYYMMDD字符串比较
+3. 涨跌幅=(收盘价-昨收盘)/昨收盘*100%
+4. A股票日行情表字段必须用双引号
+5. 涨停:收盘价/昨收盘-1>=0.098</div>
+            
+            <h4>3.4 Few-shot示例（从Milvus检索）</h4>
+            <div class="code-block">
+示例:
+Q:基金000006的名称是什么?
+S:SELECT 基金简称 FROM 基金基本信息 WHERE 基金代码='000006'
+
+Q:20210331持有贵州茅台最多的基金?
+S:SELECT 基金简称,数量 FROM 基金股票持仓明细 
+  WHERE 股票名称='贵州茅台' AND 持仓日期='20210331' 
+  ORDER BY 数量 DESC LIMIT 1</div>
+            
+            <h4>3.5 用户问题</h4>
+            <div class="code-block">
+问题: 20210331持有贵州茅台最多的基金是哪个?
+SQL:</div>
+        </div>
+        
+        <h3>步骤4：调用DeepSeek API生成SQL</h3>
+        <div class="section">
+            <p>将上述Prompt发送给DeepSeek API，LLM返回SQL：</p>
+            <div class="code-block">
+输入: [完整的System Prompt + 用户问题]
+输出: SELECT 基金简称, 数量 
+      FROM 基金股票持仓明细 
+      WHERE 股票名称='贵州茅台' AND 持仓日期='20210331' 
+      ORDER BY 数量 DESC LIMIT 1</div>
+            <div class="note">
+                <strong>关键技术：</strong>LLM理解了用户意图，知道需要：
+                <ul>
+                    <li>查"基金股票持仓明细"表</li>
+                    <li>筛选股票名称='贵州茅台'</li>
+                    <li>筛选持仓日期='20210331'</li>
+                    <li>按数量降序排列</li>
+                    <li>只取第一条（最多的）</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3>步骤5：执行SQL查询</h3>
+        <div class="section">
+            <p>在SQLite数据库上执行SQL（30秒超时）：</p>
+            <div class="code-block">
+数据库: 博金杯比赛数据.db (1.46GB)
+执行: SELECT 基金简称, 数量 FROM 基金股票持仓明细 
+      WHERE 股票名称='贵州茅台' AND 持仓日期='20210331' 
+      ORDER BY 数量 DESC LIMIT 1
+耗时: 0.3秒（有索引）
+结果: [('鹏华匠心精选混合C', 1062620)]</div>
+        </div>
+        
+        <h3>步骤6：格式化答案</h3>
+        <div class="section">
+            <p>根据结果类型格式化：</p>
+            <div class="code-block">
+# 单条单列：直接显示
+结果: [('鹏华匠心精选混合C',)]
+答案: 鹏华匠心精选混合C
+
+# 单条多列：字段名:值
+结果: [('鹏华匠心精选混合C', 1062620)]
+答案: 基金简称: 鹏华匠心精选混合C, 数量: 1062620
+
+# 多条：分点编号
+结果: [('A', 100), ('B', 80), ('C', 50)]
+答案:
+1. 基金A | 数量: 100
+2. 基金B | 数量: 80
+3. 基金C | 数量: 50</div>
+        </div>
+        
+        <h3>步骤7：返回答案</h3>
+        <div class="section">
+            <p>在网页上显示最终答案：</p>
+            <div class="code-block">答案: 鹏华匠心精选混合C</div>
+        </div>
+        
+        <h2>三、错误处理机制</h2>
+        
+        <div class="section">
+            <h3>SQL执行失败时的重试流程：</h3>
+            <div class="flow">
+                SQL执行报错 → 把错误信息反馈给LLM → LLM修正SQL → 重新执行
+            </div>
+            <div class="code-block">
+# 第一次生成的SQL
+SELECT 收盘价 FROM A股票日行情表 WHERE ...
+错误: no such column: 收盘价
+
+# 反馈给LLM后修正
+SELECT "收盘价(元)" FROM A股票日行情表 WHERE ...
+成功 ✓</div>
+            <p>最多重试2次，如果还是失败则返回错误信息。</p>
+        </div>
+        
+        <h2>四、关键技术总结</h2>
+        
+        <div class="section">
+            <table>
+                <tr>
+                    <th>环节</th>
+                    <th>技术</th>
+                    <th>说明</th>
+                </tr>
+                <tr>
+                    <td>问题理解</td>
+                    <td>LLM语义理解</td>
+                    <td>DeepSeek理解自然语言意图</td>
+                </tr>
+                <tr>
+                    <td>SQL生成</td>
+                    <td>NL2SQL</td>
+                    <td>LLM将问题翻译成SQL语句</td>
+                </tr>
+                <tr>
+                    <td>数据存储</td>
+                    <td>SQLite</td>
+                    <td>1.46GB结构化数据库</td>
+                </tr>
+                <tr>
+                    <td>索引优化</td>
+                    <td>B-Tree索引</td>
+                    <td>加速查询，从十几秒到零点几秒</td>
+                </tr>
+                <tr>
+                    <td>Few-shot示例</td>
+                    <td>Milvus向量检索</td>
+                    <td>动态找最相似的已知Q-SQL对</td>
+                </tr>
+                <tr>
+                    <td>Embedding</td>
+                    <td>m3e-base</td>
+                    <td>把问题转向量，用于相似度搜索</td>
+                </tr>
+            </table>
+        </div>
+        
+        <h2>五、与其他方案的区别</h2>
+        
+        <div class="section">
+            <table>
+                <tr>
+                    <th>方案</th>
+                    <th>本系统(NL2SQL)</th>
+                    <th>RAG系统</th>
+                </tr>
+                <tr>
+                    <td>数据源</td>
+                    <td>结构化数据库</td>
+                    <td>非结构化文档</td>
+                </tr>
+                <tr>
+                    <td>检索方式</td>
+                    <td>SQL查询</td>
+                    <td>向量相似度搜索</td>
+                </tr>
+                <tr>
+                    <td>分块</td>
+                    <td>不需要</td>
+                    <td>需要文档分块</td>
+                </tr>
+                <tr>
+                    <td>答案来源</td>
+                    <td>数据库精确查询</td>
+                    <td>检索文档片段+LLM生成</td>
+                </tr>
+                <tr>
+                    <td>准确性</td>
+                    <td>100%精确（如果SQL正确）</td>
+                    <td>可能有幻觉</td>
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</body>
+</html>

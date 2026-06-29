@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>项目完整流程图</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; font-family: 'Microsoft YaHei', sans-serif; }
+        h1 { text-align: center; color: #00d4ff; margin-bottom: 30px; }
+        h2 { color: #00d4ff; border-bottom: 2px solid #0f3460; padding-bottom: 10px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .section { background: #16213e; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .flow-box { 
+            background: #0f3460; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 10px 0;
+            border-left: 4px solid #00d4ff;
+        }
+        .flow-box h3 { color: #00d4ff; margin-top: 0; }
+        .arrow { text-align: center; color: #00d4ff; font-size: 24px; margin: 5px 0; }
+        .code { 
+            background: #0a1628; 
+            padding: 10px; 
+            border-radius: 4px; 
+            font-family: monospace; 
+            font-size: 12px; 
+            color: #4ade80;
+            white-space: pre-wrap;
+        }
+        .note { background: #1e3a5f; padding: 15px; border-radius: 4px; margin: 10px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #0f3460; padding: 10px; text-align: left; }
+        th { background: #0f3460; color: #00d4ff; }
+        .highlight { background: #1e3a5f; }
+    </style>
+</head>
+<body>
+    <h1>项目完整流程图</h1>
+    
+    <div class="container">
+        
+        <h2>一、文档解析流程（PDF招股书）</h2>
+        
+        <div class="section">
+            <div class="flow-box">
+                <h3>步骤1：用户输入问题</h3>
+                <div class="code">"华瑞电器股份有限公司的法定代表人是谁"</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="flow-box">
+                <h3>步骤2：识别公司名</h3>
+                <p>用正则表达式从问题中提取公司名称：</p>
+                <div class="code">正则: ([\u4e00-\u9fa5]{2,20}(?:有限公司|股份有限公司))
+提取: 华瑞电器股份有限公司</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="flow-box">
+                <h3>步骤3：查找PDF文件</h3>
+                <p>在pdf_txt_file目录的80个txt文件中搜索：</p>
+                <div class="code">方法1: 精确匹配公司名 → 未找到
+方法2: 模糊匹配（包含关系）→ 未找到
+方法3: grep搜索文件内容 → 找到 3e0ded8a...txt</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="flow-box">
+                <h3>步骤4：提取相关内容</h3>
+                <p>根据问题关键词，在文件中搜索相关段落：</p>
+                <div class="code">关键词: ["法定代表人", "代表人", "董事长", "总经理"]
+搜索: 逐行扫描，找到包含关键词的行
+结果: 
+  公司住所： 宁波市鄞州区姜山镇科技园区
+  成立日期： 1996年2月12日
+  法定代表人： 孙瑞良        ← 找到了！
+  注册资本： 7,500万元</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="flow-box">
+                <h3>步骤5：调用LLM生成答案</h3>
+                <p>把提取的内容发给DeepSeek：</p>
+                <div class="code">System: 你是金融文档分析专家，根据内容回答问题
+User: 
+  招股书内容: [提取的段落]
+  问题: 华瑞电器股份有限公司的法定代表人是谁
+  答案:
+→ DeepSeek返回: 孙瑞良</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="flow-box highlight">
+                <h3>最终答案</h3>
+                <div class="code">答案: 孙瑞良</div>
+            </div>
+        </div>
+        
+        <h2>二、数据库检索流程（NL2SQL）</h2>
+        
+        <div class="section">
+            <div class="flow-box">
+                <h3>步骤1：用户输入问题</h3>
+                <div class="code">"20210331持有贵州茅台最多的基金是哪个"</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="flow-box">
+                <h3>步骤2：构建Prompt</h3>
+                <p>包含数据库Schema、规则、Few-shot示例：</p>
+                <div class="code">System Prompt:
+  数据库有10张表:
+  - 基金基本信息(基金代码,基金简称,管理人,...)
+  - 基金股票持仓明细(基金代码,股票名称,数量,...)
+  - ...
+  
+  规则:
+  1. 只返回SQL
+  2. 日期用YYYYMMDD
+  3. 字段含括号用双引号
+  
+  示例:
+  Q: 基金000006的名称是什么?
+  S: SELECT 基金简称 FROM 基金基本信息 WHERE 基金代码='000006'
+
+User Prompt:
+  问题: 20210331持有贵州茅台最多的基金是哪个?
+  SQL:</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="flow-box">
+                <h3>步骤3：调用DeepSeek生成SQL</h3>
+                <p>LLM理解问题后生成SQL：</p>
+                <div class="code">输入: [完整Prompt]
+输出: SELECT 基金简称, 数量 
+      FROM 基金股票持仓明细 
+      WHERE 股票名称='贵州茅台' AND 持仓日期='20210331' 
+      ORDER BY 数量 DESC LIMIT 1</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="flow-box">
+                <h3>步骤4：执行SQL查询</h3>
+                <p>在SQLite数据库上执行（30秒超时）：</p>
+                <div class="code">数据库: 博金杯比赛数据.db
+执行: SELECT 基金简称, 数量 FROM 基金股票持仓明细 
+      WHERE 股票名称='贵州茅台' AND 持仓日期='20210331' 
+      ORDER BY 数量 DESC LIMIT 1
+耗时: 0.3秒
+结果: [('鹏华匠心精选混合C', 1062620)]</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="flow-box highlight">
+                <h3>最终答案</h3>
+                <div class="code">答案: 鹏华匠心精选混合C，持有1062620股</div>
+            </div>
+        </div>
+        
+        <h2>三、整体决策流程</h2>
+        
+        <div class="section">
+            <div class="code">
+用户输入问题
+    ↓
+判断问题类型
+    ↓
+┌─────────────────┐
+│ 是招股书问题？   │
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    ↓         ↓
+   是         否
+    ↓         ↓
+┌────────┐ ┌────────┐
+│PDF解析 │ │数据库  │
+│流程    │ │检索流程│
+└───┬────┘ └───┬────┘
+    ↓         ↓
+┌─────────────────┐
+│ 返回答案给用户   │
+└─────────────────┘</div>
+        </div>
+        
+        <h2>四、关键技术对比</h2>
+        
+        <div class="section">
+            <table>
+                <tr>
+                    <th>环节</th>
+                    <th>PDF解析流程</th>
+                    <th>数据库检索流程</th>
+                </tr>
+                <tr>
+                    <td>数据源</td>
+                    <td>80份招股书txt文件</td>
+                    <td>SQLite数据库（10张表）</td>
+                </tr>
+                <tr>
+                    <td>检索方式</td>
+                    <td>关键词匹配 + grep搜索</td>
+                    <td>LLM生成SQL查询</td>
+                </tr>
+                <tr>
+                    <td>内容提取</td>
+                    <td>逐行扫描，找包含关键词的段落</td>
+                    <td>SQL直接查询精确数据</td>
+                </tr>
+                <tr>
+                    <td>答案生成</td>
+                    <td>LLM根据提取内容回答</td>
+                    <td>SQL查询结果直接返回</td>
+                </tr>
+                <tr>
+                    <td>准确性</td>
+                    <td>取决于PDF内容完整性</td>
+                    <td>100%精确（如果SQL正确）</td>
+                </tr>
+                <tr>
+                    <td>适用场景</td>
+                    <td>公司详情、业务模式等非结构化问题</td>
+                    <td>基金数据、行情数据等结构化问题</td>
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</body>
+</html>

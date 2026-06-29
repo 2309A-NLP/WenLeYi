@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>基金数据库ER关系图</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; font-family: 'Microsoft YaHei', sans-serif; }
+        h1 { text-align: center; color: #00d4ff; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #888; font-size: 14px; margin-bottom: 20px; }
+        svg { display: block; margin: 0 auto; }
+        .table-box { fill: #16213e; stroke: #0f3460; stroke-width: 2; rx: 8; }
+        .table-header { fill: #0f3460; rx: 8; }
+        .table-title { fill: #00d4ff; font-size: 13px; font-weight: bold; }
+        .field-name { fill: #e0e0e0; font-size: 11px; }
+        .field-type { fill: #888; font-size: 10px; }
+        .pk { fill: #ffd700; font-size: 10px; }
+        .fk { fill: #ff6b6b; font-size: 10px; }
+        .relation-line { stroke: #00d4ff; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+        .relation-label { fill: #00d4ff; font-size: 10px; }
+        .legend { margin: 20px auto; max-width: 600px; }
+        .legend-item { display: inline-block; margin: 5px 15px; font-size: 12px; }
+        .legend-color { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+    </style>
+</head>
+<body>
+    <h1>基金数据库ER关系图</h1>
+    <p class="subtitle">工单编号：人工智能NLP-Agent数字人项目-基金问答智能体任务</p>
+    
+    <div class="legend">
+        <span class="legend-item"><span class="legend-color" style="background:#ffd700"></span>主键(PK)</span>
+        <span class="legend-item"><span class="legend-color" style="background:#ff6b6b"></span>外键(FK)</span>
+        <span class="legend-item"><span class="legend-color" style="background:#0f3460"></span>表头</span>
+        <span class="legend-item"><span class="legend-color" style="background:#16213e"></span>表体</span>
+        <span class="legend-item"><span class="legend-color" style="background:#00d4ff"></span>关联线</span>
+    </div>
+
+    <svg width="1100" height="800" viewBox="0 0 1100 800">
+        <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#00d4ff"/>
+            </marker>
+        </defs>
+
+        <!-- 基金基本信息 (中心) -->
+        <rect class="table-box" x="430" y="30" width="240" height="180"/>
+        <rect class="table-header" x="430" y="30" width="240" height="28"/>
+        <text class="table-title" x="550" y="49" text-anchor="middle">基金基本信息 (4,377行)</text>
+        <text class="pk" x="440" y="68">PK</text><text class="field-name" x="460" y="68">基金代码</text><text class="field-type" x="560" y="68">TEXT</text>
+        <text class="field-name" x="460" y="84">基金全称</text><text class="field-type" x="560" y="84">TEXT</text>
+        <text class="field-name" x="460" y="100">基金简称</text><text class="field-type" x="560" y="100">TEXT</text>
+        <text class="field-name" x="460" y="116">管理人</text><text class="field-type" x="560" y="116">TEXT</text>
+        <text class="field-name" x="460" y="132">托管人</text><text class="field-type" x="560" y="132">TEXT</text>
+        <text class="field-name" x="460" y="148">基金类型</text><text class="field-type" x="560" y="148">TEXT</text>
+        <text class="field-name" x="460" y="164">成立日期</text><text class="field-type" x="560" y="164">TEXT</text>
+        <text class="field-name" x="460" y="180">到期日期</text><text class="field-type" x="560" y="180">TEXT</text>
+        <text class="field-name" x="460" y="196">管理费率/托管费率</text><text class="field-type" x="600" y="196">TEXT</text>
+
+        <!-- 基金日行情表 (右上) -->
+        <rect class="table-box" x="780" y="30" width="240" height="130"/>
+        <rect class="table-header" x="780" y="30" width="240" height="28"/>
+        <text class="table-title" x="900" y="49" text-anchor="middle">基金日行情表 (1,711,892行)</text>
+        <text class="fk" x="790" y="68">FK</text><text class="field-name" x="810" y="68">基金代码</text><text class="field-type" x="900" y="68">TEXT</text>
+        <text class="field-name" x="810" y="84">交易日期</text><text class="field-type" x="900" y="84">TEXT(YYYYMMDD)</text>
+        <text class="field-name" x="810" y="100">单位净值</text><text class="field-type" x="900" y="100">REAL</text>
+        <text class="field-name" x="810" y="116">复权单位净值</text><text class="field-type" x="900" y="116">REAL</text>
+        <text class="field-name" x="810" y="132">累计单位净值</text><text class="field-type" x="900" y="132">REAL</text>
+        <text class="field-name" x="810" y="148">资产净值</text><text class="field-type" x="900" y="148">REAL</text>
+
+        <!-- 基金股票持仓明细 (右中) -->
+        <rect class="table-box" x="780" y="200" width="240" height="170"/>
+        <rect class="table-header" x="780" y="200" width="240" height="28"/>
+        <text class="table-title" x="900" y="219" text-anchor="middle">基金股票持仓明细 (955,772行)</text>
+        <text class="fk" x="790" y="238">FK</text><text class="field-name" x="810" y="238">基金代码</text><text class="field-type" x="900" y="238">TEXT</text>
+        <text class="fk" x="790" y="254">FK</text><text class="field-name" x="810" y="254">股票代码</text><text class="field-type" x="900" y="254">TEXT</text>
+        <text class="field-name" x="810" y="270">持仓日期</text><text class="field-type" x="900" y="270">TEXT(YYYYMMDD)</text>
+        <text class="field-name" x="810" y="286">股票名称</text><text class="field-type" x="900" y="286">TEXT</text>
+        <text class="field-name" x="810" y="302">数量/市值</text><text class="field-type" x="900" y="302">REAL</text>
+        <text class="field-name" x="810" y="318">市值占净值比</text><text class="field-type" x="900" y="318">REAL</text>
+        <text class="field-name" x="810" y="334">第N大重仓股</text><text class="field-type" x="900" y="334">INTEGER</text>
+        <text class="field-name" x="810" y="350">报告类型</text><text class="field-type" x="900" y="350">TEXT</text>
+
+        <!-- A股票日行情表 (右侧) -->
+        <rect class="table-box" x="780" y="400" width="240" height="160"/>
+        <rect class="table-header" x="780" y="400" width="240" height="28"/>
+        <text class="table-title" x="900" y="419" text-anchor="middle">A股票日行情表 (2,929,871行)</text>
+        <text class="pk" x="790" y="438">PK</text><text class="field-name" x="810" y="438">股票代码</text><text class="field-type" x="900" y="438">TEXT</text>
+        <text class="field-name" x="810" y="454">交易日</text><text class="field-type" x="900" y="454">TEXT(YYYYMMDD)</text>
+        <text class="field-name" x="810" y="470">昨收盘/今开盘</text><text class="field-type" x="920" y="470">REAL</text>
+        <text class="field-name" x="810" y="486">最高价/最低价</text><text class="field-type" x="920" y="486">REAL</text>
+        <text class="field-name" x="810" y="502">收盘价</text><text class="field-type" x="900" y="502">REAL</text>
+        <text class="field-name" x="810" y="518">成交量/成交金额</text><text class="field-type" x="930" y="518">REAL</text>
+
+        <!-- A股公司行业划分表 (右侧下方) -->
+        <rect class="table-box" x="780" y="580" width="240" height="120"/>
+        <rect class="table-header" x="780" y="580" width="240" height="28"/>
+        <text class="table-title" x="900" y="599" text-anchor="middle">A股公司行业划分表 (10,989,808行)</text>
+        <text class="fk" x="790" y="618">FK</text><text class="field-name" x="810" y="618">股票代码</text><text class="field-type" x="900" y="618">TEXT</text>
+        <text class="field-name" x="810" y="634">交易日期</text><text class="field-type" x="900" y="634">TEXT(YYYYMMDD)</text>
+        <text class="field-name" x="810" y="650">行业划分标准</text><text class="field-type" x="900" y="650">TEXT</text>
+        <text class="field-name" x="810" y="666">一级行业名称</text><text class="field-type" x="900" y="666">TEXT</text>
+        <text class="field-name" x="810" y="682">二级行业名称</text><text class="field-type" x="900" y="682">TEXT</text>
+
+        <!-- 基金债券持仓明细 (左侧) -->
+        <rect class="table-box" x="40" y="200" width="240" height="150"/>
+        <rect class="table-header" x="40" y="200" width="240" height="28"/>
+        <text class="table-title" x="160" y="219" text-anchor="middle">基金债券持仓明细 (144,371行)</text>
+        <text class="fk" x="50" y="238">FK</text><text class="field-name" x="70" y="238">基金代码</text><text class="field-type" x="150" y="238">TEXT</text>
+        <text class="field-name" x="70" y="254">持仓日期</text><text class="field-type" x="150" y="254">TEXT</text>
+        <text class="field-name" x="70" y="270">债券类型</text><text class="field-type" x="150" y="270">TEXT</text>
+        <text class="field-name" x="70" y="286">债券名称</text><text class="field-type" x="150" y="286">TEXT</text>
+        <text class="field-name" x="70" y="302">持债数量/市值</text><text class="field-type" x="180" y="302">REAL</text>
+        <text class="field-name" x="70" y="318">报告类型</text><text class="field-type" x="150" y="318">TEXT</text>
+
+        <!-- 基金可转债持仓明细 (左侧下方) -->
+        <rect class="table-box" x="40" y="380" width="240" height="150"/>
+        <rect class="table-header" x="40" y="380" width="240" height="28"/>
+        <text class="table-title" x="160" y="399" text-anchor="middle">基金可转债持仓明细 (76,223行)</text>
+        <text class="fk" x="50" y="418">FK</text><text class="field-name" x="70" y="418">基金代码</text><text class="field-type" x="150" y="418">TEXT</text>
+        <text class="field-name" x="70" y="434">对应股票代码</text><text class="field-type" x="150" y="434">TEXT</text>
+        <text class="field-name" x="70" y="450">债券名称</text><text class="field-type" x="150" y="450">TEXT</text>
+        <text class="field-name" x="70" y="466">数量/市值</text><text class="field-type" x="150" y="466">REAL</text>
+        <text class="field-name" x="70" y="482">报告类型</text><text class="field-type" x="150" y="482">TEXT</text>
+
+        <!-- 基金规模变动表 (左侧下方2) -->
+        <rect class="table-box" x="40" y="560" width="240" height="140"/>
+        <rect class="table-header" x="40" y="560" width="240" height="28"/>
+        <text class="table-title" x="160" y="579" text-anchor="middle">基金规模变动表 (33,360行)</text>
+        <text class="fk" x="50" y="598">FK</text><text class="field-name" x="70" y="598">基金代码</text><text class="field-type" x="150" y="598">TEXT</text>
+        <text class="field-name" x="70" y="614">公告日期</text><text class="field-type" x="150" y="614">TIMESTAMP</text>
+        <text class="field-name" x="70" y="630">截止日期</text><text class="field-type" x="150" y="630">TIMESTAMP</text>
+        <text class="field-name" x="70" y="646">期初/期末份额</text><text class="field-type" x="180" y="646">REAL</text>
+        <text class="field-name" x="70" y="662">申购/赎回份额</text><text class="field-type" x="180" y="662">REAL</text>
+        <text class="field-name" x="70" y="678">报告类型</text><text class="field-type" x="150" y="678">TEXT</text>
+
+        <!-- 基金份额持有人结构 (底部) -->
+        <rect class="table-box" x="430" y="560" width="240" height="140"/>
+        <rect class="table-header" x="430" y="560" width="240" height="28"/>
+        <text class="table-title" x="550" y="579" text-anchor="middle">基金份额持有人结构 (17,549行)</text>
+        <text class="fk" x="440" y="598">FK</text><text class="field-name" x="460" y="598">基金代码</text><text class="field-type" x="550" y="598">TEXT</text>
+        <text class="field-name" x="460" y="614">截止日期</text><text class="field-type" x="550" y="614">TIMESTAMP</text>
+        <text class="field-name" x="460" y="630">机构持有份额/比例</text><text class="field-type" x="590" y="630">REAL</text>
+        <text class="field-name" x="460" y="646">个人持有份额/比例</text><text class="field-type" x="590" y="646">REAL</text>
+        <text class="field-name" x="460" y="662">报告类型</text><text class="field-type" x="550" y="662">TEXT</text>
+
+        <!-- 港股票日行情表 (右侧最下) -->
+        <rect class="table-box" x="780" y="720" width="240" height="60"/>
+        <rect class="table-header" x="780" y="720" width="240" height="28"/>
+        <text class="table-title" x="900" y="739" text-anchor="middle">港股票日行情表 (2,514,703行)</text>
+        <text class="field-name" x="810" y="756">字段同A股票日行情表</text>
+
+        <!-- 关联线 -->
+        <!-- 基金基本信息 → 基金日行情表 -->
+        <path class="relation-line" d="M670,90 L780,90"/>
+        <text class="relation-label" x="725" y="83">基金代码</text>
+
+        <!-- 基金基本信息 → 基金股票持仓明细 -->
+        <path class="relation-line" d="M670,120 Q720,120 720,200 Q720,280 780,280"/>
+        <text class="relation-label" x="710" y="180">基金代码</text>
+
+        <!-- 基金基本信息 → 基金债券持仓明细 -->
+        <path class="relation-line" d="M430,120 Q380,120 380,200 Q380,280 280,280"/>
+        <text class="relation-label" x="360" y="180">基金代码</text>
+
+        <!-- 基金基本信息 → 基金可转债持仓明细 -->
+        <path class="relation-line" d="M430,150 Q350,150 350,380 Q350,450 280,450"/>
+        <text class="relation-label" x="330" y="300">基金代码</text>
+
+        <!-- 基金基本信息 → 基金规模变动表 -->
+        <path class="relation-line" d="M430,170 Q380,170 380,560 Q380,630 280,630"/>
+        <text class="relation-label" x="340" y="420">基金代码</text>
+
+        <!-- 基金基本信息 → 基金份额持有人结构 -->
+        <path class="relation-line" d="M550,210 L550,560"/>
+        <text class="relation-label" x="555" y="390">基金代码</text>
+
+        <!-- 基金股票持仓明细 → A股票日行情表 -->
+        <path class="relation-line" d="M900,370 L900,400"/>
+        <text class="relation-label" x="905" y="385">股票代码</text>
+
+        <!-- A股票日行情表 → A股公司行业划分表 -->
+        <path class="relation-line" d="M900,560 L900,580"/>
+        <text class="relation-label" x="905" y="570">股票代码</text>
+    </svg>
+
+    <div style="text-align:center; margin-top:20px; color:#888; font-size:12px;">
+        <p>数据来源：博金杯比赛数据.db (1.46GB, 2019-2021年)</p>
+        <p>共10张表，总行数约1,940万行</p>
+    </div>
+</body>
+</html>
