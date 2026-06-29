@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>金融对话系统</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #0a1628, #1a2744, #0d1b3e);
+    min-height: 100vh;
+    color: #e0e6f0;
+}
+.container { max-width: 900px; margin: 0 auto; padding: 20px; }
+.header { text-align: center; padding: 30px 0; border-bottom: 1px solid rgba(255,193,7,0.3); margin-bottom: 20px; }
+.header h1 { font-size: 28px; color: #ffc107; text-shadow: 0 0 20px rgba(255,193,7,0.3); }
+.header p { color: #8899bb; margin-top: 8px; font-size: 14px; }
+.header .status { display: inline-block; margin-top: 10px; font-size: 13px; }
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.status-dot.online { background: #4caf50; box-shadow: 0 0 8px #4caf50; }
+.status-dot.offline { background: #f44336; }
+.chat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden; }
+.messages { height: 460px; overflow-y: auto; padding: 20px; }
+.messages::-webkit-scrollbar { width: 6px; }
+.messages::-webkit-scrollbar-thumb { background: #ffc107; border-radius: 3px; }
+.msg { margin-bottom: 16px; display: flex; }
+.msg.user { justify-content: flex-end; }
+.msg.assistant { justify-content: flex-start; }
+.msg .bubble { max-width: 75%; padding: 12px 16px; border-radius: 12px; line-height: 1.6; font-size: 14px; }
+.msg.user .bubble { background: linear-gradient(135deg, #ffc107, #ffb300); color: #1a1a2e; border-bottom-right-radius: 4px; }
+.msg.assistant .bubble { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-bottom-left-radius: 4px; }
+.msg .bubble .time { font-size: 11px; color: #667799; margin-top: 6px; text-align: right; }
+.msg.user .bubble .time { color: rgba(0,0,0,0.4); }
+.source-detail { font-size: 11px; color: #667799; margin-top: 4px; }
+.source-badge { display: inline-block; font-size: 10px; padding: 1px 8px; border-radius: 10px; margin-right: 4px; }
+.source-badge.kb { background: rgba(76,175,80,0.2); color: #81c784; border: 1px solid rgba(76,175,80,0.3); }
+.source-badge.db { background: rgba(33,150,243,0.2); color: #64b5f6; border: 1px solid rgba(33,150,243,0.3); }
+.source-detail .item { display: inline-block; background: rgba(255,255,255,0.04); padding: 3px 8px; border-radius: 6px; margin: 2px; border: 1px solid rgba(255,255,255,0.06); }
+.db-table { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 13px; }
+.db-table td { padding: 6px 10px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.db-table tr:last-child td { border-bottom: none; }
+.db-table .td-label { color: #8899bb; font-size: 11px; width: 80px; white-space: nowrap; }
+.input-area { display: flex; padding: 16px; gap: 10px; border-top: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.2); }
+.input-area input { flex: 1; padding: 12px 16px; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; background: rgba(255,255,255,0.05); color: #e0e6f0; font-size: 14px; outline: none; }
+.input-area input:focus { border-color: #ffc107; }
+.input-area input::placeholder { color: #556688; }
+.input-area button { padding: 12px 24px; border: none; border-radius: 10px; background: linear-gradient(135deg, #ffc107, #ff9800); color: #1a1a2e; font-weight: bold; cursor: pointer; }
+.input-area button:hover { transform: scale(1.03); }
+.input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
+.quick-questions { display: flex; gap: 8px; padding: 12px 16px; flex-wrap: wrap; border-top: 1px solid rgba(255,255,255,0.05); }
+.quick-questions button { padding: 6px 14px; border: 1px solid rgba(255,193,7,0.3); border-radius: 20px; background: transparent; color: #ffc107; font-size: 12px; cursor: pointer; }
+.quick-questions button:hover { background: rgba(255,193,7,0.1); }
+.loading-dots::after { content: ''; animation: dots 1.5s steps(4,end) infinite; }
+@keyframes dots { 0%{content:''} 25%{content:'.'} 50%{content:'..'} 75%{content:'...'} 100%{content:''} }
+.disclaimer { text-align: center; font-size: 11px; color: #445566; padding: 15px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>金融对话系统</h1>
+<p>基于RAG的金融知识智能问答</p>
+<div class="status"><span class="status-dot" id="statusDot"></span><span id="statusText"></span></div>
+</div>
+<div class="chat-box">
+<div class="messages" id="messages"></div>
+<div class="quick-questions" id="quickQuestions">
+<button onclick="loadHistory()">加载历史</button>
+<button onclick="clearHistory()">清空历史</button>
+</div>
+<div class="input-area">
+<input type="text" id="input" placeholder="输入金融问题...">
+<button id="sendBtn">发送</button>
+</div>
+</div>
+<div class="disclaimer">本系统提供的信息仅供参考，不构成投资建议。</div>
+</div>
+
+<script>
+var qlist = ['什么是PE（市盈率）？','A股涨跌幅限制是多少？','什么是注册制？','基金有哪些分类？'];
+var loading = false;
+var chatHistory = [];  // 对话历史记录
+
+function init() {
+  // 检查服务状态
+  var h = new XMLHttpRequest();
+  h.open('GET', '/api/v1/health', true);
+  h.onload = function() {
+    if (h.status == 200) {
+      document.getElementById('statusDot').className = 'status-dot online';
+      document.getElementById('statusText').textContent = '在线';
+      addMsg('assistant', '您好！我是金融助手，可以为您解答股票、基金、债券、保险等金融问题。请直接提问！');
+    } else {
+      document.getElementById('statusDot').className = 'status-dot offline';
+      document.getElementById('statusText').textContent = '离线';
+    }
+  };
+  h.onerror = function() {
+    document.getElementById('statusDot').className = 'status-dot offline';
+    document.getElementById('statusText').textContent = '离线';
+    addMsg('assistant', '服务暂不可用，请稍后重试。');
+  };
+  h.send();
+
+  // 加载快捷问题
+  var qc = document.getElementById('quickQuestions');
+  for (var i = 0; i < qlist.length; i++) {
+    (function(q) {
+      var btn = document.createElement('button');
+      btn.textContent = q;
+      btn.onclick = function() { document.getElementById('input').value = q; send(); };
+      qc.appendChild(btn);
+    })(qlist[i]);
+  }
+
+  // 键盘事件
+  document.getElementById('input').onkeydown = function(e) {
+    if (e.key === 'Enter') send();
+  };
+  document.getElementById('sendBtn').onclick = send;
+  
+  // 注意：历史记录不再自动加载，需要用户点击按钮
+}
+
+function addMsg(role, text, sources) {
+  var m = document.getElementById('messages');
+  var div = document.createElement('div');
+  div.className = 'msg ' + role;
+  var now = new Date();
+  var ts = ('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
+  var html = '<div class="bubble">';
+  // 检测是否是表格数据（如 DB 查询结果）
+  if (text.indexOf('1.') >= 0 && text.indexOf('|') >= 0) {
+    var lines = text.split('\n');
+    var inTable = false;
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
+      if (line.match(/^\d+\./) && line.indexOf('|') >= 0) {
+        if (!inTable) { html += '<table class="db-table"><tbody>'; inTable = true; }
+        var cols = line.replace(/^\d+\.\s*/, '').split('|');
+        html += '<tr>';
+        for (var j = 0; j < cols.length; j++) {
+          var parts = cols[j].split(':');
+          html += '<td' + (j==0?' class="td-label"':'') + '>' + (parts.length>1 ? parts[1].trim() : cols[j].trim()) + '</td>';
+        }
+        html += '</tr>';
+      } else {
+        if (inTable) { html += '</tbody></table>'; inTable = false; }
+        html += line + '<br>';
+      }
+    }
+    if (inTable) html += '</tbody></table>';
+  } else {
+    html += text.replace(/\n/g, '<br>');
+  }
+  if (sources && sources.length > 0) {
+    html += '<div class="source-detail">';
+    for (var i = 0; i < sources.length; i++) {
+      var s = sources[i];
+      var cat = s.category || '';
+      var isDb = cat.indexOf('数据库') >= 0;
+      html += '<div class="item"><span class="source-badge ' + (isDb?'db':'kb') + '">' + (isDb?'DB':'知识库') + '</span>' + (s.question||cat).substring(0,30) + '</div>';
+    }
+    html += '</div>';
+  }
+  html += '<div class="time">' + ts + '</div></div>';
+  div.innerHTML = html;
+  m.appendChild(div);
+  m.scrollTop = m.scrollHeight;
+  
+  // 保存到历史记录
+  saveHistory(role, text);
+}
+
+// 保存对话历史到localStorage
+function saveHistory(role, text) {
+  var history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+  var now = new Date();
+  var ts = ('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
+  history.push({role: role, text: text, time: ts});
+  
+  // 只保留最近20条
+  if (history.length > 20) {
+    history = history.slice(-20);
+  }
+  localStorage.setItem('chatHistory', JSON.stringify(history));
+}
+
+// 加载历史记录并显示
+function loadHistory() {
+  var history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+  if (history.length === 0) {
+    addMsg('assistant', '暂无历史记录');
+    return;
+  }
+  
+  // 清空当前消息
+  document.getElementById('messages').innerHTML = '';
+  
+  // 显示历史记录
+  for (var i = 0; i < history.length; i++) {
+    var msg = history[i];
+    var m = document.getElementById('messages');
+    var div = document.createElement('div');
+    div.className = 'msg ' + msg.role;
+    var html = '<div class="bubble">';
+    html += msg.text.replace(/\n/g, '<br>');
+    html += '<div class="time">' + msg.time + '</div></div>';
+    div.innerHTML = html;
+    m.appendChild(div);
+  }
+  
+  // 滚动到底部
+  var m = document.getElementById('messages');
+  m.scrollTop = m.scrollHeight;
+  
+  addMsg('assistant', '已加载 ' + history.length + ' 条历史记录');
+}
+
+// 清空历史记录
+function clearHistory() {
+  localStorage.removeItem('chatHistory');
+  document.getElementById('messages').innerHTML = '';
+  addMsg('assistant', '历史记录已清空');
+}
+
+function send() {
+  var inp = document.getElementById('input');
+  var btn = document.getElementById('sendBtn');
+  var text = inp.value.trim();
+  if (text == '' || loading) return;
+  inp.value = '';
+  loading = true;
+  btn.disabled = true;
+  addMsg('user', text);
+  var ld = document.createElement('div');
+  ld.className = 'msg assistant';
+  ld.innerHTML = '<div class="bubble"><span class="loading-dots">思考中</span></div>';
+  document.getElementById('messages').appendChild(ld);
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', '/api/v1/chat', true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onload = function() {
+    ld.remove();
+    if (xhr.status == 200) {
+      var data = JSON.parse(xhr.responseText);
+      addMsg('assistant', data.answer, data.sources || []);
+    } else {
+      addMsg('assistant', '请求失败，错误代码: ' + xhr.status);
+    }
+    loading = false;
+    btn.disabled = false;
+    inp.focus();
+  };
+  xhr.onerror = function() {
+    ld.remove();
+    addMsg('assistant', '请求失败，请检查服务是否正常运行。');
+    loading = false;
+    btn.disabled = false;
+    inp.focus();
+  };
+  xhr.send(JSON.stringify({message: text, use_knowledge: true, user_id: 0}));
+}
+
+window.onload = init;
+</script>
+</body>
+</html>
